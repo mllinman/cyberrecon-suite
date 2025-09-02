@@ -221,10 +221,10 @@ export CYBERRECON_STRIPE_WEBHOOK_SECRET="your-webhook-secret"
 ## 📞 Security Support
 
 ### Enterprise Security Support
-- **Dedicated Security Team**: 24/7 monitoring and response
-- **Threat Intelligence**: Custom threat feeds and analysis
-- **Penetration Testing**: Annual security assessments
-- **Compliance Assistance**: Regulatory compliance support
+- **Security Consulting**: Professional security assessments
+- **Custom Development**: Tailored cybersecurity solutions
+- **Training Services**: Security awareness and technical training
+- **Compliance Support**: Regulatory compliance assistance
 
 ### Community Security
 - **Security Advisories**: Public vulnerability notifications
@@ -242,12 +242,10 @@ We acknowledge security researchers who responsibly disclose vulnerabilities:
 *Security researchers who have helped improve CyberRecon Suite security will be listed here.*
 
 ### Bug Bounty Program
-- **Critical Vulnerabilities**: $1000 - $5000
-- **High Severity**: $500 - $1000  
-- **Medium Severity**: $100 - $500
-- **Low Severity**: $50 - $100
-
-*Contact security@cyberrecon.com for bug bounty program details.*
+- **Critical Vulnerabilities**: $500 - $2500
+- **High Severity**: $250 - $500  
+- **Medium Severity**: $50 - $250
+- **Low Severity**: $25 - $50
 
 ---
 

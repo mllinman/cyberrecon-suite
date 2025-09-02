@@ -358,9 +358,9 @@ litestream replicate cyberrecon_main.db s3://your-bucket/db-backups/
 ## 📞 Support
 
 ### Enterprise Support
-- **Email**: support@cyberrecon.com
-- **Phone**: +1-555-CYBER-SEC
-- **Portal**: https://support.cyberrecon.com
+- **Email**: support@bulletdropstudios.com
+- **Phone**: +1 (989) 555-0123
+- **Portal**: https://support.bulletdropstudios.com
 
 ### Community Support
 - **GitHub Issues**: Bug reports and feature requests
@@ -368,5 +368,3 @@ litestream replicate cyberrecon_main.db s3://your-bucket/db-backups/
 - **Wiki**: Community-maintained documentation
 
 ---
-
-*For additional deployment scenarios and advanced configurations, contact our enterprise support team.*

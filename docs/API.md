@@ -411,9 +411,9 @@ response = requests.post(
 ## 📞 Support
 
 ### API Support
-- **Documentation**: https://docs.cyberrecon.com/api
-- **Support Email**: api-support@cyberrecon.com
-- **Status Page**: https://status.cyberrecon.com
+- **Documentation**: https://docs.bulletdropstudios.com/api
+- **Support Email**: api-support@bulletdropstudios.com
+- **Status Page**: https://status.bulletdropstudios.com
 
 ### Rate Limit Headers
 ```http
@@ -423,5 +423,3 @@ X-RateLimit-Reset: 1642694400
 ```
 
 ---
-
-*For complete API documentation and interactive testing, visit our API portal at https://api.cyberrecon.com*
