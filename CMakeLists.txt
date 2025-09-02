@@ -33,6 +33,8 @@ include_directories(src/modern)
 include_directories(src/payments)
 include_directories(src/monitoring)
 include_directories(src/tools)
+include_directories(src/compliance)
+include_directories(src/integrations)
 
 # Define source files
 set(SOURCES
@@ -68,6 +70,11 @@ set(SOURCES
     src/monitoring/NetworkMonitor.cpp
     src/tools/WirelessPentesting.cpp
     src/tools/PentestingTools.cpp
+    src/compliance/SOC2Compliance.cpp
+    src/compliance/ComplianceManager.cpp
+    src/compliance/AuditLogger.cpp
+    src/integrations/SplunkIntegration.cpp
+    src/integrations/ThreatIntelligenceFeeds.cpp
 )
 
 # Define header files
@@ -103,6 +110,11 @@ set(HEADERS
     src/monitoring/NetworkMonitor.h
     src/tools/WirelessPentesting.h
     src/tools/PentestingTools.h
+    src/compliance/SOC2Compliance.h
+    src/compliance/ComplianceManager.h
+    src/compliance/AuditLogger.h
+    src/integrations/SplunkIntegration.h
+    src/integrations/ThreatIntelligenceFeeds.h
 )
 
 # Create executable

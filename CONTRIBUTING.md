@@ -232,9 +232,9 @@ Active contributors may be invited to become maintainers based on:
 - **Wiki**: Community-maintained documentation and guides
 
 ### Direct Contact
-- **Email**: dev@cyberrecon.com
-- **Security Issues**: security@cyberrecon.com
-- **Business Inquiries**: business@cyberrecon.com
+- **Email**: dev@bulletdropstudios.com
+- **Security Issues**: security@bulletdropstudios.com
+- **Business Inquiries**: business@bulletdropstudios.com
 
 ## 📄 License
 

@@ -29,6 +29,8 @@ A comprehensive cybersecurity operations platform built with C++ and Qt6, featur
 
 ## Demo Credentials
 
+⚠️ **IMPORTANT**: By using these credentials, you agree to the penetration testing disclaimer and will only use security testing tools on authorized systems.
+
 For testing purposes, use these credentials:
 
 **Professional Plan User:**
@@ -137,6 +139,7 @@ After building, run the executable:
 - **Case Management**: Incident tracking and collaboration
 - **Attack Graph Visualization**: Threat modeling and analysis
 - **ML Correlation Engine**: Advanced event correlation
+- **SOC 2 Compliance**: Trust Service Criteria monitoring and audit trail
 - **Team Collaboration**: Real-time chat and coordination
 - **User Authentication**: Secure login and session management
 - **Profile Management**: Comprehensive user settings and preferences
@@ -149,6 +152,8 @@ The application uses SQLite for data persistence. Multiple database files are cr
 - `cyberrecon_auth.db` - User authentication and profiles
 - `cyberrecon_cases.db` - Case management and evidence
 - `soar_rules.db` - SOAR automation rules
+- `soc2_compliance.db` - SOC 2 compliance controls and audit data
+- `cyberrecon_audit.db` - Comprehensive audit trail for compliance
 
 ## Stripe Integration
 
