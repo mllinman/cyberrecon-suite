@@ -46,10 +46,15 @@
 // Modern modules
 #include "modern/ThreatIntelligence.h"
 #include "modern/SecurityOrchestration.h"
+#include "integrations/SplunkIntegration.h"
+#include "integrations/ThreatIntelligenceFeeds.h"
 #include "monitoring/NetworkMonitor.h"
 #include "automation/SOARExecutor.h"
 #include "tools/WirelessPentesting.h"
 #include "tools/PentestingTools.h"
+#include "compliance/SOC2Compliance.h"
+#include "compliance/ComplianceManager.h"
+#include "compliance/AuditLogger.h"
 
 // Profile
 #include "profile/UserProfile.h"
@@ -82,6 +87,11 @@ MainWindow::MainWindow(const QString &username, QWidget *parent)
     tabs->addTab(new IncidentTimeline(), "Incident Timeline");
     tabs->addTab(new CaseManagement(), "Case Management");
     tabs->addTab(new NetworkMonitor(), "🌐 Network Monitor");
+    tabs->addTab(new SOC2Compliance(), "🛡️ SOC 2 Compliance");
+
+    // Integrated Security Tools
+    tabs->addTab(new SplunkIntegration(), "🔍 Splunk Analytics");
+    tabs->addTab(new ThreatIntelligenceFeeds(), "🌐 Intel Feeds");
 
     // Penetration Testing Tools
     tabs->addTab(new WirelessPentesting(), "📡 Wireless Pentest");
@@ -109,6 +119,11 @@ MainWindow::MainWindow(const QString &username, QWidget *parent)
     // User Profile
     tabs->addTab(new UserProfile(username), "👤 Profile");
 
+    // Initialize compliance manager
+    ComplianceManager *complianceManager = new ComplianceManager(this);
+    complianceManager->enableSOC2Compliance(true);
+    complianceManager->startComplianceMonitoring();
+    
     // Updater runs in background
     new Updater(this);
     
@@ -206,6 +221,10 @@ void MainWindow::initializeDatabase() {
                "panel TEXT NOT NULL, "
                "severity TEXT NOT NULL, "
                "message TEXT NOT NULL)");
+    
+    // Initialize audit logging
+    AuditLogger::instance()->logSystemEvent("CyberRecon Suite started", AuditLogger::Info, 
+                                           QString("Application started by user: %1").arg(currentUser));
 }
 
 void MainWindow::setupWindow() {

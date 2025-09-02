@@ -10,22 +10,14 @@
 #include <QSqlDatabase>
 #include <QTreeWidget>
 #include <QLineEdit>
-#include <QtCharts/QBarSet>
-#include <QtCharts/QChartView>
 
-using namespace QtCharts;
-
-class EDRMonitoring : public QWidget {
+class CrowdStrikeEDR : public QWidget {
     Q_OBJECT
+
 public:
-    explicit EDRMonitoring(QWidget *parent = nullptr);
+    explicit CrowdStrikeEDR(QWidget *parent = nullptr);
 
 private slots:
-    // Alert and monitoring
-    void simulateAlert();
-    void refreshAlerts();
-    
-    // Endpoint management
     void scanEndpoints();
     void quarantineEndpoint();
     void releaseQuarantine();
@@ -38,8 +30,6 @@ private slots:
     void exportThreatData();
 
 private:
-    void createChart();
-    void updateChart();
     void setupUI();
     void setupStyling();
     void initializeDatabase();
@@ -51,12 +41,7 @@ private:
     QString generateProcessAnalysis();
     QString simulateThreatHunt();
     
-    // Original EDR components
-    QTextEdit *output;
-    QBarSet *edrSet;
-    QChartView *chartView;
-    
-    // Enhanced EDR components
+    // UI Components
     QTableWidget *endpointsTable;
     QTableWidget *threatsTable;
     QTextEdit *activityLog;

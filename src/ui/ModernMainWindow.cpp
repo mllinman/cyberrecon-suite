@@ -33,6 +33,8 @@
 #include "automation/SOARExecutor.h"
 #include "tools/WirelessPentesting.h"
 #include "tools/PentestingTools.h"
+#include "compliance/SOC2Compliance.h"
+#include "integrations/SplunkIntegration.h"
 
 ModernMainWindow::ModernMainWindow(const QString &username, QWidget *parent)
     : QMainWindow(parent), currentUser(username) {
@@ -135,6 +137,7 @@ void ModernMainWindow::createSidebar() {
     addSidebarButton("🎯", "Threat Intel", "Advanced Threat Intelligence", 6);
     addSidebarButton("🔎", "Threat Hunting", "Proactive Threat Detection", 7);
     addSidebarButton("🌐", "Intel Hub", "Threat Intelligence Feeds", 8);
+    addSidebarButton("🔍", "Splunk Analytics", "Search & Analytics Platform", 24);
     addSidebarButton("🧠", "ML Correlation", "Machine Learning Analysis", 9);
     
     addSidebarSeparator();
@@ -171,6 +174,15 @@ void ModernMainWindow::createSidebar() {
     addSidebarButton("💼", "Cases", "Case Management", 18);
     addSidebarButton("💬", "Team Chat", "Collaboration Platform", 19);
     addSidebarButton("📊", "Reports", "Security Reports", 20);
+    
+    addSidebarSeparator();
+    
+    // Compliance Group
+    auto *complianceLabel = new QLabel("COMPLIANCE");
+    complianceLabel->setObjectName("sectionLabel");
+    sidebarLayout->addWidget(complianceLabel);
+    
+    addSidebarButton("🛡️", "SOC 2", "SOC 2 Trust Service Criteria", 23);
     
     addSidebarSeparator();
     
@@ -289,6 +301,8 @@ void ModernMainWindow::createModules() {
     moduleStack->addWidget(new ReportGenerator());         // 20
     moduleStack->addWidget(new AdminPanel());              // 21
     moduleStack->addWidget(new ThemeSelector());           // 22
+    moduleStack->addWidget(new SOC2Compliance());          // 23
+    moduleStack->addWidget(new SplunkIntegration());        // 24
 }
 
 void ModernMainWindow::addSidebarButton(const QString &icon, const QString &text, const QString &tooltip, int index) {
@@ -354,7 +368,10 @@ void ModernMainWindow::switchToModule(int moduleIndex) {
             "Team Collaboration Platform",
             "Security Report Generator",
             "System Administration Panel",
-            "Theme & Interface Customization"
+            "Theme & Interface Customization",
+            "SOC 2 Compliance Management",
+            "Splunk-Style Search & Analytics Platform",
+            "CrowdStrike-Style Endpoint Detection & Response"
         };
         
         if (moduleIndex < moduleTitles.size()) {

@@ -11,6 +11,7 @@
 #include <QFrame>
 #include <QGraphicsDropShadowEffect>
 #include "payments/PaymentDialog.h"
+#include "compliance/AuditLogger.h"
 
 LoginWindow::LoginWindow(QWidget *parent) 
     : QDialog(parent), subscriptionActive(false) {
@@ -30,6 +31,13 @@ void LoginWindow::setupUI() {
     auto *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(20);
     mainLayout->setContentsMargins(40, 40, 40, 40);
+
+    // Legal disclaimer for penetration testing tools
+    auto *disclaimerLabel = new QLabel("⚠️ By logging in, you agree to use penetration testing tools only for authorized security testing");
+    disclaimerLabel->setStyleSheet("color: #ff9800; font-size: 10px; margin: 5px; text-align: center;");
+    disclaimerLabel->setAlignment(Qt::AlignCenter);
+    disclaimerLabel->setWordWrap(true);
+    mainLayout->addWidget(disclaimerLabel);
 
     // Logo and title
     logoLabel = new QLabel();
@@ -317,9 +325,15 @@ void LoginWindow::handleLogin() {
                 settings.setValue("auth/remember_user", username);
             }
             
+            // Log successful authentication for SOC 2 compliance
+            AuditLogger::instance()->logAuthenticationEvent(username, "Success", "127.0.0.1");
+            
             statusLabel->setText("<font color='#4caf50'>Login successful!</font>");
             QTimer::singleShot(500, this, &QDialog::accept);
         } else {
+            // Log failed authentication for SOC 2 compliance
+            AuditLogger::instance()->logAuthenticationEvent(username, "Failed", "127.0.0.1");
+            
             statusLabel->setText("<font color='#f44336'>Invalid username or password</font>");
             loginBtn->setEnabled(true);
             loginBtn->setText("Login");

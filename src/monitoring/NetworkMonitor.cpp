@@ -361,6 +361,26 @@ void NetworkMonitor::setupStyling() {
 void NetworkMonitor::startPacketCapture() {
     if (isCapturing) return;
     
+    // Show legal disclaimer before starting
+    int ret = QMessageBox::question(this, "⚠️ Legal Authorization Required", 
+        "IMPORTANT LEGAL NOTICE:\n\n"
+        "You are about to use packet capture tools that can:\n"
+        "• Intercept network communications\n"
+        "• Capture sensitive data\n"
+        "• Monitor user activities\n\n"
+        "These tools must ONLY be used on networks you own or have explicit written authorization to monitor.\n\n"
+        "Unauthorized packet capture may violate:\n"
+        "• Wiretapping laws\n"
+        "• Privacy regulations (GDPR, CCPA)\n"
+        "• Electronic communications acts\n\n"
+        "Do you have proper authorization to capture packets on this network?",
+        QMessageBox::Yes | QMessageBox::No);
+    
+    if (ret != QMessageBox::Yes) {
+        scanOutput->append("<font color='#f44336'>[CANCELLED] User declined legal authorization confirmation</font>");
+        return;
+    }
+    
     QString interface = interfaceCombo->currentText();
     QString filter = captureFilter->text().trimmed();
     
@@ -564,6 +584,26 @@ void NetworkMonitor::startNetworkScan() {
     QString target = targetInput->text().trimmed();
     if (target.isEmpty()) {
         QMessageBox::warning(this, "Input Required", "Please enter a target to scan.");
+        return;
+    }
+    
+    // Show legal disclaimer before starting
+    int ret = QMessageBox::question(this, "⚠️ Legal Authorization Required", 
+        "IMPORTANT LEGAL NOTICE:\n\n"
+        "You are about to use network scanning tools that can:\n"
+        "• Discover network hosts and services\n"
+        "• Identify system vulnerabilities\n"
+        "• Trigger security alerts\n\n"
+        "These tools must ONLY be used on networks you own or have explicit written authorization to scan.\n\n"
+        "Unauthorized network scanning may violate:\n"
+        "• Computer crime laws\n"
+        "• Network terms of service\n"
+        "• Cybersecurity regulations\n\n"
+        "Do you have proper authorization to scan the target network?",
+        QMessageBox::Yes | QMessageBox::No);
+    
+    if (ret != QMessageBox::Yes) {
+        scanOutput->append("<font color='#f44336'>[CANCELLED] User declined legal authorization confirmation</font>");
         return;
     }
     

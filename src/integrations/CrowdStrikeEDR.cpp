@@ -1,4 +1,4 @@
-#include "EDRMonitoring.h"
+#include "CrowdStrikeEDR.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -14,16 +14,8 @@
 #include <QDateTime>
 #include <QRandomGenerator>
 #include <QApplication>
-#include <QTimer>
-#include <QtCharts/QBarSet>
-#include <QtCharts/QBarSeries>
-#include <QtCharts/QChartView>
-#include <QtCharts/QChart>
-#include <QPainter>
 
-using namespace QtCharts;
-
-EDRMonitoring::EDRMonitoring(QWidget *parent) 
+CrowdStrikeEDR::CrowdStrikeEDR(QWidget *parent) 
     : QWidget(parent), totalEndpoints(0), totalThreats(0), quarantinedEndpoints(0) {
     
     setupUI();
@@ -33,18 +25,17 @@ EDRMonitoring::EDRMonitoring(QWidget *parent)
     
     // Auto-refresh timer
     refreshTimer = new QTimer(this);
-    connect(refreshTimer, &QTimer::timeout, this, &EDRMonitoring::refreshAlerts);
-    refreshTimer->start(8000); // every 8 seconds
-
-    refreshAlerts();
+    connect(refreshTimer, &QTimer::timeout, this, &CrowdStrikeEDR::refreshEndpoints);
+    refreshTimer->start(15000); // Refresh every 15 seconds
 }
 
-void EDRMonitoring::setupUI() {
+void CrowdStrikeEDR::setupUI() {
     auto *layout = new QVBoxLayout(this);
-
-    QLabel *title = new QLabel("🦅 Advanced Endpoint Detection & Response Platform");
-    title->setStyleSheet("color: #00bcd4; font: bold 18pt; margin: 10px;");
-    layout->addWidget(title);
+    
+    // Title
+    auto *titleLabel = new QLabel("🦅 CrowdStrike-Style Endpoint Detection & Response");
+    titleLabel->setStyleSheet("font-size: 18px; font-weight: bold; color: #00bcd4; margin: 10px;");
+    layout->addWidget(titleLabel);
     
     // Statistics Dashboard
     auto *statsGroup = new QGroupBox("Endpoint Protection Overview");
@@ -70,10 +61,6 @@ void EDRMonitoring::setupUI() {
     statsLayout->addWidget(lastUpdateLabel, 1, 2, 1, 2);
     
     layout->addWidget(statsGroup);
-
-    // Create chart
-    createChart();
-    layout->addWidget(chartView);
     
     // Control Panel
     auto *controlGroup = new QGroupBox("Endpoint Management Controls");
@@ -81,17 +68,17 @@ void EDRMonitoring::setupUI() {
     
     auto *scanBtn = new QPushButton("🔍 Scan All Endpoints");
     scanBtn->setStyleSheet("QPushButton { background-color: #2196f3; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; }");
-    connect(scanBtn, &QPushButton::clicked, this, &EDRMonitoring::scanEndpoints);
+    connect(scanBtn, &QPushButton::clicked, this, &CrowdStrikeEDR::scanEndpoints);
     controlLayout->addWidget(scanBtn);
     
     auto *quarantineBtn = new QPushButton("🔒 Quarantine Selected");
     quarantineBtn->setStyleSheet("QPushButton { background-color: #f44336; color: white; padding: 10px 20px; border-radius: 6px; }");
-    connect(quarantineBtn, &QPushButton::clicked, this, &EDRMonitoring::quarantineEndpoint);
+    connect(quarantineBtn, &QPushButton::clicked, this, &CrowdStrikeEDR::quarantineEndpoint);
     controlLayout->addWidget(quarantineBtn);
     
     auto *releaseBtn = new QPushButton("🔓 Release Quarantine");
     releaseBtn->setStyleSheet("QPushButton { background-color: #4caf50; color: white; padding: 10px 20px; border-radius: 6px; }");
-    connect(releaseBtn, &QPushButton::clicked, this, &EDRMonitoring::releaseQuarantine);
+    connect(releaseBtn, &QPushButton::clicked, this, &CrowdStrikeEDR::releaseQuarantine);
     controlLayout->addWidget(releaseBtn);
     
     policyCombo = new QComboBox();
@@ -100,7 +87,7 @@ void EDRMonitoring::setupUI() {
     
     auto *deployBtn = new QPushButton("📋 Deploy Policy");
     deployBtn->setStyleSheet("QPushButton { background-color: #ff9800; color: white; padding: 10px 20px; border-radius: 6px; }");
-    connect(deployBtn, &QPushButton::clicked, this, &EDRMonitoring::deployPolicy);
+    connect(deployBtn, &QPushButton::clicked, this, &CrowdStrikeEDR::deployPolicy);
     controlLayout->addWidget(deployBtn);
     
     layout->addWidget(controlGroup);
@@ -170,7 +157,7 @@ void EDRMonitoring::setupUI() {
     
     auto *huntBtn = new QPushButton("🔍 Hunt");
     huntBtn->setStyleSheet("QPushButton { background-color: #9c27b0; color: white; padding: 8px 16px; border-radius: 4px; }");
-    connect(huntBtn, &QPushButton::clicked, this, &EDRMonitoring::huntThreats);
+    connect(huntBtn, &QPushButton::clicked, this, &CrowdStrikeEDR::huntThreats);
     huntControlsLayout->addWidget(huntBtn);
     
     huntLayout->addLayout(huntControlsLayout);
@@ -183,18 +170,11 @@ void EDRMonitoring::setupUI() {
     
     auto *blockBtn = new QPushButton("🚫 Block Hash");
     blockBtn->setStyleSheet("QPushButton { background-color: #f44336; color: white; padding: 8px 16px; border-radius: 4px; }");
-    connect(blockBtn, &QPushButton::clicked, this, &EDRMonitoring::blockHash);
+    connect(blockBtn, &QPushButton::clicked, this, &CrowdStrikeEDR::blockHash);
     hashLayout->addWidget(blockBtn);
     
     huntLayout->addLayout(hashLayout);
     rightLayout->addWidget(huntGroup);
-
-    // Original EDR output
-    output = new QTextEdit();
-    output->setReadOnly(true);
-    output->setStyleSheet("background-color: #1e1e1e; color: #ffffff; font-family: 'Consolas', monospace;");
-    output->setMaximumHeight(150);
-    rightLayout->addWidget(output);
     
     // Activity log
     auto *activityLabel = new QLabel("📝 EDR Activity Log");
@@ -242,35 +222,17 @@ void EDRMonitoring::setupUI() {
     mainSplitter->setStretchFactor(1, 1);
     
     layout->addWidget(mainSplitter);
-
-    auto *buttonLayout = new QHBoxLayout();
-    QPushButton *btn = new QPushButton("Simulate EDR Alert");
-    QPushButton *refreshBtn = new QPushButton("Refresh Alerts");
-    QPushButton *exportBtn = new QPushButton("Export Threat Data");
-    
-    btn->setStyleSheet("QPushButton { background-color: #f44336; color: white; padding: 8px; border-radius: 4px; }");
-    refreshBtn->setStyleSheet("QPushButton { background-color: #2196f3; color: white; padding: 8px; border-radius: 4px; }");
-    exportBtn->setStyleSheet("QPushButton { background-color: #4caf50; color: white; padding: 8px; border-radius: 4px; }");
-    
-    buttonLayout->addWidget(btn);
-    buttonLayout->addWidget(refreshBtn);
-    buttonLayout->addWidget(exportBtn);
-    layout->addLayout(buttonLayout);
-
-    connect(btn, &QPushButton::clicked, this, &EDRMonitoring::simulateAlert);
-    connect(refreshBtn, &QPushButton::clicked, this, &EDRMonitoring::refreshAlerts);
-    connect(exportBtn, &QPushButton::clicked, this, &EDRMonitoring::exportThreatData);
     
     // Connect table selection
-    connect(endpointsTable, &QTableWidget::itemSelectionChanged, this, &EDRMonitoring::viewEndpointDetails);
-    connect(huntQuery, &QLineEdit::returnPressed, this, &EDRMonitoring::huntThreats);
+    connect(endpointsTable, &QTableWidget::itemSelectionChanged, this, &CrowdStrikeEDR::viewEndpointDetails);
+    connect(huntQuery, &QLineEdit::returnPressed, this, &CrowdStrikeEDR::huntThreats);
     
     // Initial log messages
-    activityLog->append("<font color='#00bcd4'>[EDR] Advanced EDR platform initialized</font>");
+    activityLog->append("<font color='#00bcd4'>[EDR] CrowdStrike-style EDR platform initialized</font>");
     activityLog->append("<font color='#4caf50'>[EDR] Endpoint protection active</font>");
 }
 
-void EDRMonitoring::setupStyling() {
+void CrowdStrikeEDR::setupStyling() {
     setStyleSheet(R"(
         QGroupBox {
             font-weight: bold;
@@ -327,12 +289,12 @@ void EDRMonitoring::setupStyling() {
     )");
 }
 
-void EDRMonitoring::initializeDatabase() {
-    edrDb = QSqlDatabase::addDatabase("QSQLITE", "edr_monitoring");
-    edrDb.setDatabaseName("edr_monitoring.db");
+void CrowdStrikeEDR::initializeDatabase() {
+    edrDb = QSqlDatabase::addDatabase("QSQLITE", "crowdstrike_edr");
+    edrDb.setDatabaseName("crowdstrike_edr.db");
     
     if (!edrDb.open()) {
-        QMessageBox::critical(this, "Database Error", "Could not open EDR monitoring database");
+        QMessageBox::critical(this, "Database Error", "Could not open CrowdStrike EDR database");
         return;
     }
     
@@ -384,9 +346,24 @@ void EDRMonitoring::initializeDatabase() {
             global_block BOOLEAN DEFAULT TRUE
         )
     )");
+    
+    // Create policies table
+    query.exec(R"(
+        CREATE TABLE IF NOT EXISTS edr_policies (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            policy_name TEXT UNIQUE NOT NULL,
+            prevention_enabled BOOLEAN DEFAULT TRUE,
+            detection_enabled BOOLEAN DEFAULT TRUE,
+            machine_learning BOOLEAN DEFAULT TRUE,
+            behavioral_analysis BOOLEAN DEFAULT TRUE,
+            script_protection BOOLEAN DEFAULT TRUE,
+            memory_protection BOOLEAN DEFAULT TRUE,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    )");
 }
 
-void EDRMonitoring::loadEndpointData() {
+void CrowdStrikeEDR::loadEndpointData() {
     // Check if endpoints already exist
     QSqlQuery checkQuery("SELECT COUNT(*) FROM endpoints", edrDb);
     if (checkQuery.exec() && checkQuery.next() && checkQuery.value(0).toInt() > 0) {
@@ -450,85 +427,7 @@ void EDRMonitoring::loadEndpointData() {
     refreshEndpoints();
 }
 
-void EDRMonitoring::createChart() {
-    edrSet = new QBarSet("EDR Alerts");
-    *edrSet << 0 << 0 << 0 << 0; // injection, ransomware, powershell, other
-
-    QBarSeries *series = new QBarSeries();
-    series->append(edrSet);
-
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    chart->setTitle("EDR Alert Categories");
-    chart->setBackgroundBrush(QBrush(QColor("#2b2b2b")));
-    chart->setTitleBrush(QBrush(QColor("#ffffff")));
-
-    chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->setMaximumHeight(300);
-}
-
-void EDRMonitoring::simulateAlert() {
-    QString alert = "Process injection detected in explorer.exe";
-    output->append(QString("[EDR Critical] %1").arg(alert));
-
-    QSqlQuery q;
-    q.prepare("INSERT INTO events (panel, severity, message) VALUES ('EDR', 'Critical', :msg)");
-    q.bindValue(":msg", alert);
-    q.exec();
-
-    updateChart();
-}
-
-void EDRMonitoring::refreshAlerts() {
-    static int counter = 0;
-    struct Alert { QString text; QString sev; };
-    QVector<Alert> mockAlerts = {
-        {"Process injection detected: explorer.exe → lsass.exe", "Critical"},
-        {"Ransomware behavior flagged: high file rename rate", "Critical"},
-        {"Suspicious PowerShell execution: base64 script", "Warning"},
-        {"Unusual connection: chrome.exe → 198.51.100.44", "Info"},
-        {"Memory scan: shellcode detected in notepad.exe", "Critical"}
-    };
-
-    Alert a = mockAlerts[counter % mockAlerts.size()];
-    counter++;
-
-    QString color = (a.sev == "Critical") ? "#f44336" : (a.sev == "Warning") ? "#ff9800" : "#4caf50";
-    QString formatted = QString("<font color='%1'>[EDR %2] %3</font>")
-        .arg(color).arg(a.sev).arg(a.text);
-
-    output->append(formatted);
-
-    QSqlQuery q;
-    q.prepare("INSERT INTO events (panel, severity, message) VALUES ('EDR', :sev, :msg)");
-    q.bindValue(":sev", a.sev);
-    q.bindValue(":msg", a.text);
-    q.exec();
-
-    updateChart();
-}
-
-void EDRMonitoring::updateChart() {
-    // Query database for current counts
-    QSqlQuery q("SELECT message FROM events WHERE panel='EDR'");
-    int injection = 0, ransomware = 0, powershell = 0, other = 0;
-    
-    while (q.next()) {
-        QString msg = q.value(0).toString();
-        if (msg.contains("injection", Qt::CaseInsensitive)) injection++;
-        else if (msg.contains("ransomware", Qt::CaseInsensitive)) ransomware++;
-        else if (msg.contains("powershell", Qt::CaseInsensitive)) powershell++;
-        else other++;
-    }
-
-    edrSet->replace(0, injection);
-    edrSet->replace(1, ransomware);
-    edrSet->replace(2, powershell);
-    edrSet->replace(3, other);
-}
-
-void EDRMonitoring::refreshEndpoints() {
+void CrowdStrikeEDR::refreshEndpoints() {
     // Clear tables
     endpointsTable->setRowCount(0);
     threatsTable->setRowCount(0);
@@ -576,8 +475,8 @@ void EDRMonitoring::refreshEndpoints() {
     quarantineCount->setText(QString::number(quarantinedEndpoints));
 }
 
-void EDRMonitoring::addEndpointToTable(const QString &hostname, const QString &ip, const QString &os, 
-                                      const QString &status, const QString &lastSeen, const QString &threats) {
+void CrowdStrikeEDR::addEndpointToTable(const QString &hostname, const QString &ip, const QString &os, 
+                                       const QString &status, const QString &lastSeen, const QString &threats) {
     int row = endpointsTable->rowCount();
     endpointsTable->insertRow(row);
     
@@ -609,7 +508,7 @@ void EDRMonitoring::addEndpointToTable(const QString &hostname, const QString &i
     endpointsTable->setItem(row, 5, threatItem);
 }
 
-void EDRMonitoring::addThreatDetection(const QString &endpoint, const QString &threat, const QString &severity) {
+void CrowdStrikeEDR::addThreatDetection(const QString &endpoint, const QString &threat, const QString &severity) {
     int row = threatsTable->rowCount();
     threatsTable->insertRow(row);
     
@@ -633,7 +532,7 @@ void EDRMonitoring::addThreatDetection(const QString &endpoint, const QString &t
     threatsTable->setItem(row, 4, new QTableWidgetItem(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm")));
 }
 
-void EDRMonitoring::scanEndpoints() {
+void CrowdStrikeEDR::scanEndpoints() {
     activityLog->append("<font color='#2196f3'>[EDR] Starting comprehensive endpoint scan...</font>");
     
     scanProgress->setVisible(true);
@@ -662,14 +561,14 @@ void EDRMonitoring::scanEndpoints() {
     
     // Log scan completion
     QSqlQuery logQuery;
-    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('EDR', 'Info', :msg)");
+    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('CrowdStrikeEDR', 'Info', :msg)");
     logQuery.bindValue(":msg", QString("EDR endpoint scan completed - %1 endpoints scanned").arg(totalEndpoints));
     logQuery.exec();
     
     refreshEndpoints();
 }
 
-void EDRMonitoring::quarantineEndpoint() {
+void CrowdStrikeEDR::quarantineEndpoint() {
     int currentRow = endpointsTable->currentRow();
     if (currentRow < 0) {
         QMessageBox::warning(this, "No Selection", "Please select an endpoint to quarantine.");
@@ -688,14 +587,14 @@ void EDRMonitoring::quarantineEndpoint() {
     
     // Log quarantine action
     QSqlQuery logQuery;
-    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('EDR', 'Warning', :msg)");
+    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('CrowdStrikeEDR', 'Warning', :msg)");
     logQuery.bindValue(":msg", QString("Endpoint quarantined: %1").arg(hostname));
     logQuery.exec();
     
     refreshEndpoints();
 }
 
-void EDRMonitoring::releaseQuarantine() {
+void CrowdStrikeEDR::releaseQuarantine() {
     int currentRow = endpointsTable->currentRow();
     if (currentRow < 0) {
         QMessageBox::warning(this, "No Selection", "Please select an endpoint to release from quarantine.");
@@ -714,14 +613,14 @@ void EDRMonitoring::releaseQuarantine() {
     
     // Log release action
     QSqlQuery logQuery;
-    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('EDR', 'Info', :msg)");
+    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('CrowdStrikeEDR', 'Info', :msg)");
     logQuery.bindValue(":msg", QString("Endpoint released from quarantine: %1").arg(hostname));
     logQuery.exec();
     
     refreshEndpoints();
 }
 
-void EDRMonitoring::deployPolicy() {
+void CrowdStrikeEDR::deployPolicy() {
     QString policy = policyCombo->currentText();
     
     activityLog->append(QString("<font color='#2196f3'>[POLICY] Deploying policy: %1</font>").arg(policy));
@@ -737,12 +636,12 @@ void EDRMonitoring::deployPolicy() {
     
     // Log policy deployment
     QSqlQuery logQuery;
-    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('EDR', 'Info', :msg)");
+    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('CrowdStrikeEDR', 'Info', :msg)");
     logQuery.bindValue(":msg", QString("EDR policy deployed: %1").arg(policy));
     logQuery.exec();
 }
 
-void EDRMonitoring::huntThreats() {
+void CrowdStrikeEDR::huntThreats() {
     QString query = huntQuery->text().trimmed();
     if (query.isEmpty()) {
         QMessageBox::warning(this, "Hunt Query Required", "Please enter a threat hunting query.");
@@ -759,12 +658,12 @@ void EDRMonitoring::huntThreats() {
     
     // Log threat hunt
     QSqlQuery logQuery;
-    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('EDR', 'Info', :msg)");
+    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('CrowdStrikeEDR', 'Info', :msg)");
     logQuery.bindValue(":msg", QString("Threat hunt executed: %1").arg(query));
     logQuery.exec();
 }
 
-void EDRMonitoring::blockHash() {
+void CrowdStrikeEDR::blockHash() {
     QString hash = hashInput->text().trimmed();
     if (hash.isEmpty()) {
         QMessageBox::warning(this, "Hash Required", "Please enter a file hash to block.");
@@ -790,12 +689,12 @@ void EDRMonitoring::blockHash() {
     
     // Log hash blocking
     QSqlQuery logQuery;
-    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('EDR', 'Warning', :msg)");
+    logQuery.prepare("INSERT INTO events (panel, severity, message) VALUES ('CrowdStrikeEDR', 'Warning', :msg)");
     logQuery.bindValue(":msg", QString("File hash blocked: %1").arg(hash.left(16) + "..."));
     logQuery.exec();
 }
 
-void EDRMonitoring::viewEndpointDetails() {
+void CrowdStrikeEDR::viewEndpointDetails() {
     int currentRow = endpointsTable->currentRow();
     if (currentRow < 0) return;
     
@@ -827,7 +726,7 @@ void EDRMonitoring::viewEndpointDetails() {
     }
 }
 
-QString EDRMonitoring::generateProcessAnalysis() {
+QString CrowdStrikeEDR::generateProcessAnalysis() {
     QStringList processes = {
         "explorer.exe (PID: 1234) - Normal behavior",
         "chrome.exe (PID: 5678) - Web browsing activity",
@@ -849,7 +748,7 @@ QString EDRMonitoring::generateProcessAnalysis() {
     return analysis;
 }
 
-QString EDRMonitoring::simulateThreatHunt() {
+QString CrowdStrikeEDR::simulateThreatHunt() {
     QStringList huntResults = {
         "Hunt completed - 0 matches found across all endpoints",
         "Hunt found 2 suspicious PowerShell executions on LAPTOP-042",
@@ -861,13 +760,13 @@ QString EDRMonitoring::simulateThreatHunt() {
     return huntResults[QRandomGenerator::global()->bounded(huntResults.size())];
 }
 
-void EDRMonitoring::analyzeProcess() {
+void CrowdStrikeEDR::analyzeProcess() {
     processAnalysis->append(generateProcessAnalysis());
 }
 
-void EDRMonitoring::exportThreatData() {
+void CrowdStrikeEDR::exportThreatData() {
     QString fileName = QFileDialog::getSaveFileName(this, "Export Threat Data", 
-        QString("EDR_Threats_%1.csv").arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")), 
+        QString("CrowdStrike_Threats_%1.csv").arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")), 
         "CSV Files (*.csv)");
     
     if (fileName.isEmpty()) return;
