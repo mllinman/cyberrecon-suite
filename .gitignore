@@ -1,0 +1,257 @@
+# CyberRecon Suite - Git Ignore File
+
+# Build directories
+build/
+build-*/
+out/
+bin/
+lib/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+install_manifest.txt
+
+# Compiled binaries
+*.exe
+*.app
+*.dmg
+*.deb
+*.rpm
+CyberReconSuite
+CyberReconSuite.exe
+
+# Object files
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+
+# Qt generated files
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.qm
+.qmake.cache
+.qmake.stash
+
+# Database files (contain sensitive data)
+*.db
+*.sqlite
+*.sqlite3
+cyberrecon_*.db
+soar_rules.db
+
+# Log files
+*.log
+logs/
+debug.txt
+error.txt
+
+# Temporary files
+*.tmp
+*.temp
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and editor files
+.vscode/
+.idea/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.suo
+*.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+*.sbr
+*.sdf
+*.opensdf
+*.unsuccessfulbuild
+*.idb
+*.pdb
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# CLion
+.idea/
+cmake-build-*/
+
+# Qt Creator
+*.pro.user*
+*.qbs.user*
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+
+# Package managers
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# API keys and secrets (CRITICAL - Never commit these!)
+**/api_keys.txt
+**/secrets.txt
+**/stripe_keys.txt
+**/*secret*
+**/*key*
+**/*token*
+**/*password*
+
+# Backup files
+*.bak
+*.backup
+*.old
+*~
+
+# Core dumps
+core
+core.*
+
+# Profiling data
+*.prof
+*.gprof
+callgrind.out.*
+cachegrind.out.*
+
+# Coverage reports
+*.gcov
+*.gcda
+*.gcno
+coverage/
+htmlcov/
+
+# Documentation build
+docs/_build/
+docs/html/
+docs/latex/
+
+# Distribution packages
+dist/
+*.tar.gz
+*.zip
+*.7z
+*.rar
+
+# Test results
+test_results/
+*.xml
+*.junit
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Configuration files with sensitive data
+config.ini
+settings.conf
+local_config.*
+
+# Platform specific
+# Windows
+*.lnk
+*.url
+ehthumbs.db
+
+# macOS
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Penetration testing artifacts
+*.pcap
+*.pcapng
+*.cap
+wordlists/
+*.txt.gz
+hashcat.potfile
+john.pot
+*.hccapx
+*.22000
+
+# Wireless testing files
+handshakes/
+*.cap
+*.hccap
+*.netxml
+*.kismet
+*.csv
+
+# Network monitoring captures
+captures/
+packets/
+*.dump
+
+# Forensics artifacts
+memory_dumps/
+*.mem
+*.vmem
+*.raw
+evidence/
+
+# SOAR automation logs
+automation_logs/
+workflow_results/
+playbook_outputs/
