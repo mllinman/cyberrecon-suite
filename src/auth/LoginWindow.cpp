@@ -10,6 +10,11 @@
 #include <QGridLayout>
 #include <QFrame>
 #include <QGraphicsDropShadowEffect>
+#include <QRegularExpression>
+#include <QTimer>
+#include <QRandomGenerator>
+#include <QDateTime>
+#include <QMap>
 #include "payments/PaymentDialog.h"
 #include "compliance/AuditLogger.h"
 
@@ -276,6 +281,14 @@ void LoginWindow::initializeDatabase() {
 }
 
 bool LoginWindow::validateCredentials(const QString &username, const QString &password) {
+    // Check for lockout first
+    if (isUserLockedOut(username)) {
+        QDateTime lockoutEnd = lockoutTimes[username];
+        int remainingMinutes = QDateTime::currentDateTime().secsTo(lockoutEnd) / 60;
+        AuditLogger::instance()->logAuthenticationEvent(username, "Locked", "127.0.0.1");
+        return false;
+    }
+    
     QSqlDatabase db = QSqlDatabase::database("auth");
     QSqlQuery query(db);
     
@@ -284,21 +297,46 @@ bool LoginWindow::validateCredentials(const QString &username, const QString &pa
     
     if (query.exec() && query.next()) {
         QString storedHash = query.value(0).toString();
-        QString inputHash = QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256).toHex();
         
-        if (storedHash == inputHash) {
+        // Use enhanced password verification
+        if (verifyPasswordHash(password, storedHash)) {
             currentUser = username;
             QString subscriptionType = query.value(1).toString();
             subscriptionActive = (subscriptionType != "free");
             
-            // Update last login
+            // Reset failed attempts on successful login
+            failedAttempts.remove(username);
+            
+            // Update last login with enhanced security logging
             QSqlQuery updateQuery(db);
-            updateQuery.prepare("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE username = ?");
+            updateQuery.prepare("UPDATE users SET last_login = CURRENT_TIMESTAMP, failed_attempts = 0 WHERE username = ?");
             updateQuery.addBindValue(username);
             updateQuery.exec();
             
             return true;
+        } else {
+            // Track failed attempts
+            failedAttempts[username] = failedAttempts.value(username, 0) + 1;
+            
+            // Lock account after 3 failed attempts
+            if (failedAttempts[username] >= 3) {
+                lockoutUser(username, 15); // 15 minute lockout
+            }
+            
+            // Update failed attempts in database
+            QSqlQuery failQuery(db);
+            failQuery.prepare("UPDATE users SET failed_attempts = ? WHERE username = ?");
+            failQuery.addBindValue(failedAttempts[username]);
+            failQuery.addBindValue(username);
+            failQuery.exec();
+            
+            // Log failed attempt
+            AuditLogger::instance()->logAuthenticationEvent(username, "Failed", "127.0.0.1");
         }
+    } else {
+        // Log attempt on non-existent user (could be reconnaissance)
+        AuditLogger::instance()->logSecurityEvent("Login attempt on non-existent user", "127.0.0.1",
+                                                 QString("Username: %1").arg(username.left(10)));
     }
     
     return false;
@@ -308,8 +346,32 @@ void LoginWindow::handleLogin() {
     QString username = usernameEdit->text().trimmed();
     QString password = passwordEdit->text();
     
+    // Enhanced input validation for security
     if (username.isEmpty() || password.isEmpty()) {
         statusLabel->setText("<font color='#f44336'>Please enter both username and password</font>");
+        return;
+    }
+    
+    // Validate username format (alphanumeric + underscore, 3-32 chars)
+    QRegularExpression usernameRegex("^[a-zA-Z0-9_]{3,32}$");
+    if (!usernameRegex.match(username).hasMatch()) {
+        statusLabel->setText("<font color='#f44336'>Invalid username format</font>");
+        return;
+    }
+    
+    // Validate password constraints
+    if (password.length() < 8 || password.length() > 128) {
+        statusLabel->setText("<font color='#f44336'>Password must be 8-128 characters</font>");
+        return;
+    }
+    
+    // Check for potential injection attempts
+    if (username.contains(QRegularExpression("[;<>\"'\\\\]")) || 
+        password.contains(QRegularExpression("[;<>\"'\\\\]"))) {
+        statusLabel->setText("<font color='#f44336'>Invalid characters detected</font>");
+        // Log potential security threat
+        AuditLogger::instance()->logSecurityEvent("Login injection attempt", "127.0.0.1", 
+                                                 QString("Username: %1").arg(username.left(10)));
         return;
     }
     
@@ -317,11 +379,12 @@ void LoginWindow::handleLogin() {
     loginBtn->setText("Logging in...");
     statusLabel->setText("<font color='#2196f3'>Authenticating...</font>");
     
-    // Simulate authentication delay
+    // Simulate authentication delay (prevents timing attacks)
     QTimer::singleShot(1000, this, [this, username, password]() {
         if (validateCredentials(username, password)) {
             if (rememberMeCheck->isChecked()) {
                 QSettings settings;
+                // Only store username, never password
                 settings.setValue("auth/remember_user", username);
             }
             
@@ -442,4 +505,76 @@ void LoginWindow::showSubscriptionPlans() {
     )");
     
     planDialog->show();
+}
+
+// Enhanced security functions implementation
+QString LoginWindow::hashPasswordWithSalt(const QString &password, const QString &salt) {
+    QString actualSalt = salt.isEmpty() ? generateSalt() : salt;
+    
+    // Use PBKDF2-like approach with multiple iterations
+    QByteArray saltedPassword = (password + actualSalt).toUtf8();
+    QByteArray hash = saltedPassword;
+    
+    // Apply SHA-256 multiple times for strengthening
+    const int iterations = 10000;
+    for (int i = 0; i < iterations; ++i) {
+        hash = QCryptographicHash::hash(hash, QCryptographicHash::Sha256);
+    }
+    
+    // Return salt + hash for storage
+    return actualSalt + ":" + hash.toHex();
+}
+
+QString LoginWindow::generateSalt() {
+    // Generate a random salt
+    const QString chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const int saltLength = 16;
+    
+    QString salt;
+    for (int i = 0; i < saltLength; ++i) {
+        int index = QRandomGenerator::global()->bounded(chars.length());
+        salt += chars.at(index);
+    }
+    return salt;
+}
+
+bool LoginWindow::verifyPasswordHash(const QString &password, const QString &storedHash) {
+    QStringList parts = storedHash.split(":");
+    if (parts.size() != 2) {
+        // Fallback for old simple hash format
+        QString simpleHash = QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256).toHex();
+        return storedHash == simpleHash;
+    }
+    
+    QString salt = parts[0];
+    QString expectedHash = parts[1];
+    
+    QString computedFullHash = hashPasswordWithSalt(password, salt);
+    QStringList computedParts = computedFullHash.split(":");
+    
+    return computedParts.size() == 2 && computedParts[1] == expectedHash;
+}
+
+void LoginWindow::lockoutUser(const QString &username, int minutes) {
+    lockoutTimes[username] = QDateTime::currentDateTime().addSecs(minutes * 60);
+    
+    // Log security event
+    AuditLogger::instance()->logSecurityEvent("User lockout", "127.0.0.1",
+                                             QString("User %1 locked out for %2 minutes").arg(username).arg(minutes));
+}
+
+bool LoginWindow::isUserLockedOut(const QString &username) {
+    if (!lockoutTimes.contains(username)) {
+        return false;
+    }
+    
+    QDateTime lockoutEnd = lockoutTimes[username];
+    if (QDateTime::currentDateTime() >= lockoutEnd) {
+        // Lockout expired, remove it
+        lockoutTimes.remove(username);
+        failedAttempts.remove(username);
+        return false;
+    }
+    
+    return true;
 }

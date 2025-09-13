@@ -29,6 +29,13 @@ private:
     bool validateCredentials(const QString &username, const QString &password);
     void initializeDatabase();
     
+    // Enhanced security functions
+    QString hashPasswordWithSalt(const QString &password, const QString &salt = "");
+    QString generateSalt();
+    bool verifyPasswordHash(const QString &password, const QString &storedHash);
+    void lockoutUser(const QString &username, int minutes = 15);
+    bool isUserLockedOut(const QString &username);
+    
     QLineEdit *usernameEdit;
     QLineEdit *passwordEdit;
     QPushButton *loginBtn;
@@ -41,4 +48,8 @@ private:
     
     QString currentUser;
     bool subscriptionActive;
+    
+    // Security tracking
+    QMap<QString, int> failedAttempts;
+    QMap<QString, QDateTime> lockoutTimes;
 };
