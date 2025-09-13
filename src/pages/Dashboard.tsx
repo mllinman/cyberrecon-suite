@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
+import WidgetGrid from '../components/WidgetGrid'
+import { WidgetConfig } from '../components/Widget'
 import { 
   Download, 
   Shield, 
@@ -24,6 +26,19 @@ const Dashboard = () => {
   const { currentTheme, animationsEnabled } = useTheme()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [dashboardView, setDashboardView] = useState<'overview' | 'widgets' | 'analytics'>('overview')
+  const [widgetLayout, setWidgetLayout] = useState<WidgetConfig[]>([])
+
+  // Load saved widget layout
+  React.useEffect(() => {
+    const savedLayout = localStorage.getItem('cyberrecon-widget-layout')
+    if (savedLayout) {
+      try {
+        setWidgetLayout(JSON.parse(savedLayout))
+      } catch (error) {
+        console.error('Error loading widget layout:', error)
+      }
+    }
+  }, [])
 
   if (!user) {
     return (
@@ -100,6 +115,27 @@ const Dashboard = () => {
     link.href = `/downloads/${filename}`
     link.download = filename
     link.click()
+  }
+
+  // Widget management functions
+  const handleWidgetLayoutSave = (layout: WidgetConfig[]) => {
+    setWidgetLayout(layout)
+    localStorage.setItem('cyberrecon-widget-layout', JSON.stringify(layout))
+  }
+
+  const handleWidgetAdd = (widget: WidgetConfig) => {
+    const newLayout = [...widgetLayout, widget]
+    handleWidgetLayoutSave(newLayout)
+  }
+
+  const handleWidgetRemove = (id: string) => {
+    const newLayout = widgetLayout.filter(w => w.id !== id)
+    handleWidgetLayoutSave(newLayout)
+  }
+
+  const handleWidgetResize = (id: string, size: WidgetConfig['size']) => {
+    const newLayout = widgetLayout.map(w => w.id === id ? { ...w, size } : w)
+    handleWidgetLayoutSave(newLayout)
   }
 
   // Widget components for modular dashboard
@@ -369,19 +405,15 @@ const Dashboard = () => {
             )}
 
             {dashboardView === 'widgets' && (
-              <motion.div
-                initial={animationsEnabled ? { opacity: 0, y: 20 } : { opacity: 1 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="card"
-              >
-                <h2 className="text-xl font-semibold text-white mb-6">Dashboard Widgets</h2>
-                <p className="text-slate-400 mb-8">Customize your dashboard with modular widgets. Drag and drop to reorganize.</p>
-                <div className="text-center py-12">
-                  <Grid3x3 className="h-16 w-16 text-slate-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">Widget System Coming Soon</h3>
-                  <p className="text-slate-400">Customizable dashboard widgets will be available in the next update.</p>
-                </div>
-              </motion.div>
+              <WidgetGrid
+                widgets={widgetLayout}
+                onWidgetAdd={handleWidgetAdd}
+                onWidgetRemove={handleWidgetRemove}
+                onWidgetResize={handleWidgetResize}
+                onLayoutSave={handleWidgetLayoutSave}
+                editable={true}
+                className="pb-8"
+              />
             )}
 
             {dashboardView === 'analytics' && (
