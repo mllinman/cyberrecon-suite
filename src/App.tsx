@@ -16,50 +16,65 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import { AuthProvider } from './contexts/AuthContext'
 import { StripeProvider } from './contexts/StripeContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 import AccessControl from './components/AccessControl'
 import FirewallManager from './security/FirewallManager'
 
 function App() {
   return (
-    <AuthProvider>
-      <StripeProvider>
-        <div className="min-h-screen bg-slate-900 text-slate-50">
-          <Navbar />
-          <ThemeSelector />
-          <main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/products/cyberrecon" element={<CyberRecon />} />
-              <Route path="/products/cyberranger" element={<CyberRanger />} />
-              <Route path="/products/wifi-wolverine" element={<WifiWolverine />} />
-              <Route path="/products/custom" element={<CustomSolutions />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/firewall" element={
-                <AccessControl requiredPlan="professional" feature="Advanced Firewall Protection">
-                  <FirewallManager />
-                </AccessControl>
-              } />
-            </Routes>
-          </main>
-          <Footer />
-          <Toaster 
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: '#1e293b',
-                color: '#ffffff',
-                border: '1px solid var(--color-primary-500)',
-              },
-            }}
-          />
-        </div>
-      </StripeProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <StripeProvider>
+          <div className="min-h-screen bg-slate-900 text-slate-50">
+            {/* Skip to main content link for accessibility */}
+            <a 
+              href="#main-content" 
+              className="skip-link"
+              tabIndex={1}
+            >
+              Skip to main content
+            </a>
+            
+            <Navbar />
+            <ThemeSelector />
+            
+            <main id="main-content" tabIndex={-1}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/products/cyberrecon" element={<CyberRecon />} />
+                <Route path="/products/cyberranger" element={<CyberRanger />} />
+                <Route path="/products/wifi-wolverine" element={<WifiWolverine />} />
+                <Route path="/products/custom" element={<CustomSolutions />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/firewall" element={
+                  <AccessControl requiredPlan="professional" feature="Advanced Firewall Protection">
+                    <FirewallManager />
+                  </AccessControl>
+                } />
+              </Routes>
+            </main>
+            
+            <Footer />
+            
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: 'var(--color-surface)',
+                  color: 'var(--color-text)',
+                  border: '1px solid var(--color-primary-500)',
+                },
+              }}
+            />
+          </div>
+        </StripeProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 

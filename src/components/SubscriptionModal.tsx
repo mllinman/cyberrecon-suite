@@ -99,7 +99,6 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ plan, onClose }) 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-dark-800 rounded-2xl border border-dark-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
         className="bg-slate-800/95 backdrop-blur-sm rounded-2xl border border-slate-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
       >
         {/* Header */}
