@@ -35,6 +35,8 @@ include_directories(src/monitoring)
 include_directories(src/tools)
 include_directories(src/compliance)
 include_directories(src/integrations)
+include_directories(src/database)
+include_directories(src/performance)
 
 # Define source files
 set(SOURCES
@@ -43,6 +45,10 @@ set(SOURCES
     src/ui/ModernMainWindow.cpp
     src/auth/LoginWindow.cpp
     src/auth/SplashScreen.cpp
+    src/database/DatabaseManager.cpp
+    src/performance/AsyncTaskManager.cpp
+    src/modern/ErrorHandling.cpp
+    src/modern/SecureNetworkManager.cpp
     src/profile/UserProfile.cpp
     src/modern/ThreatIntelligence.cpp
     src/modern/SecurityOrchestration.cpp
@@ -115,6 +121,10 @@ set(HEADERS
     src/compliance/AuditLogger.h
     src/integrations/SplunkIntegration.h
     src/integrations/ThreatIntelligenceFeeds.h
+    src/database/DatabaseManager.h
+    src/performance/AsyncTaskManager.h
+    src/modern/ErrorHandling.h
+    src/modern/SecureNetworkManager.h
 )
 
 # Create executable
