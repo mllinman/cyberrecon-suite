@@ -37,6 +37,7 @@ include_directories(src/compliance)
 include_directories(src/integrations)
 include_directories(src/database)
 include_directories(src/performance)
+include_directories(src/security)
 
 # Define source files
 set(SOURCES
@@ -49,6 +50,7 @@ set(SOURCES
     src/performance/AsyncTaskManager.cpp
     src/modern/ErrorHandling.cpp
     src/modern/SecureNetworkManager.cpp
+    src/security/InputValidator.cpp
     src/profile/UserProfile.cpp
     src/modern/ThreatIntelligence.cpp
     src/modern/SecurityOrchestration.cpp
@@ -125,6 +127,7 @@ set(HEADERS
     src/performance/AsyncTaskManager.h
     src/modern/ErrorHandling.h
     src/modern/SecureNetworkManager.h
+    src/security/InputValidator.h
 )
 
 # Create executable
