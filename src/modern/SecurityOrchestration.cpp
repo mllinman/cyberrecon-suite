@@ -7,6 +7,7 @@
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QRandomGenerator>
 
 SecurityOrchestration::SecurityOrchestration(QWidget *parent) 
     : QWidget(parent), isExecuting(false), currentStep(0) {
@@ -333,7 +334,7 @@ void SecurityOrchestration::updateWorkflowStatus() {
         // Simulate step execution time
         QTimer::singleShot(1500, this, [this, item, stepName]() {
             item->setText(1, "✅ Completed");
-            item->setText(2, QString("%1s").arg(1 + qrand() % 3));
+            item->setText(2, QString("%1s").arg(1 + QRandomGenerator::global()->bounded(3)));
             item->setForeground(1, QColor("#4caf50"));
             
             executionLog->append(QString("<font color='#4caf50'>[SUCCESS] %1 completed</font>").arg(stepName));

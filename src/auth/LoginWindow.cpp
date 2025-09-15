@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QGridLayout>
+#include <QScreen>
 #include <QFrame>
 #include <QGraphicsDropShadowEffect>
 #include "payments/PaymentDialog.h"

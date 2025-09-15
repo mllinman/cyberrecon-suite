@@ -4,8 +4,6 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QChartView>
 
-using namespace QtCharts;
-
 class Forensics : public QWidget {
     Q_OBJECT
 public:

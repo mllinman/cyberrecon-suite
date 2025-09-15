@@ -8,7 +8,7 @@
 #include <QScreen>
 
 SplashScreen::SplashScreen(QWidget *parent) 
-    : QSplashScreen(parent), currentProgress(0), messageIndex(0) {
+    : QSplashScreen(), currentProgress(0), messageIndex(0) {
     
     // Create splash pixmap
     QPixmap splashPixmap(500, 300);
@@ -100,7 +100,7 @@ void SplashScreen::startLoadingSequence() {
 }
 
 void SplashScreen::updateProgress() {
-    currentProgress += 2 + (qrand() % 8); // Random progress increment
+    currentProgress += 2 + (QRandomGenerator::global()->bounded(8)); // Random progress increment
     
     if (currentProgress >= 100) {
         currentProgress = 100;

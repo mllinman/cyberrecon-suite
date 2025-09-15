@@ -16,7 +16,6 @@
 #include <QPainter>
 #include <QLabel>
 
-using namespace QtCharts;
 
 IntelHub::IntelHub(QWidget *parent) : QWidget(parent) {
     auto *layout = new QVBoxLayout(this);
@@ -103,7 +102,6 @@ void IntelHub::refreshIntel() {
         {"IOC Update: C2 infrastructure taken down", "Info"}
     };
 
-    Intel i = feeds[qrand() % feeds.size()];
     Intel i = feeds[QRandomGenerator::global()->bounded(feeds.size())];
 
     QString color = (i.sev == "Critical") ? "#f44336" : (i.sev == "Warning") ? "#ff9800" : "#4caf50";

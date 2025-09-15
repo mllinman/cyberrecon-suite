@@ -96,7 +96,6 @@ void ThreatHunting::refreshResults() {
         "Hunt Query: lateral movement → network scan pattern found"
     };
 
-    QString res = hunts[qrand() % hunts.size()];
     QString res = hunts[QRandomGenerator::global()->bounded(hunts.size())];
     results->append(QString("<font color='#ff9800'>[Auto-Hunt] %1</font>").arg(res));
     

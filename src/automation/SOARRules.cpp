@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSqlQuery>
+#include <QSqlError>
 #include <QMessageBox>
 #include <QHeaderView>
 #include <QLabel>

@@ -115,8 +115,6 @@ void CollaborationChat::simulateTeamActivity() {
         "Coffee break anyone? ☕"
     };
     
-    QString member = teamMembers[qrand() % teamMembers.size()];
-    QString message = messages[qrand() % messages.size()];
     QString member = teamMembers[QRandomGenerator::global()->bounded(teamMembers.size())];
     QString message = messages[QRandomGenerator::global()->bounded(messages.size())];
     QString color = "#4caf50"; // Default green
@@ -126,6 +124,7 @@ void CollaborationChat::simulateTeamActivity() {
         color = "#ff9800"; // Orange for requests/investigations
     }
     
+    QString timestamp = QTime::currentTime().toString("hh:mm:ss");
     QString formattedMsg = QString("<font color='%1'>[%2] %3:</font> %4")
                           .arg(color).arg(timestamp).arg(member).arg(message);
     

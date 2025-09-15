@@ -2,8 +2,6 @@
 #include <QWidget>
 #include <QtCharts/QChartView>
 
-using namespace QtCharts;
-
 class SOCWallboard : public QWidget {
     Q_OBJECT
 public:

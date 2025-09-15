@@ -12,7 +12,6 @@
 #include <QtCharts/QChart>
 #include <QPainter>
 
-using namespace QtCharts;
 
 Forensics::Forensics(QWidget *parent) : QWidget(parent), cycle(0) {
     auto *layout = new QVBoxLayout(this);
@@ -90,7 +89,6 @@ void Forensics::refreshForensics() {
         "Process analysis: hollowed process detected"
     };
 
-    QString finding = mockFindings[qrand() % mockFindings.size()];
     QString finding = mockFindings[QRandomGenerator::global()->bounded(mockFindings.size())];
     QString color = finding.contains("suspicious") || finding.contains("evil") || finding.contains("malicious") ? "#f44336" : "#4caf50";
     
