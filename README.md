@@ -53,16 +53,35 @@ chmod +x build.sh
 ```
 
 ### Windows
+
+#### Option 1: Native Windows Build
 ```bash
 # Using the batch script
 build.bat
 
+# Deploy for distribution
+deploy-windows.bat
+
+# Create installer (requires NSIS)
+makensis installer.nsi
+```
+
+#### Option 2: Cross-compilation from Linux
+```bash
+# Build Windows executable from Linux
+./build-windows.sh
+```
+
+#### Option 3: Manual Build
+```bash
 # Or manually with PowerShell/Command Prompt
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --config Release --parallel
 ```
+
+**📋 For detailed Windows deployment instructions, see [Windows Deployment Guide](docs/WINDOWS_DEPLOYMENT.md)**
 
 ## Running the Application
 
@@ -71,9 +90,25 @@ After building, run the executable:
 # Linux/macOS
 ./build/CyberReconSuite
 
-# Windows
+# Windows (native build)
 ./build/Release/CyberReconSuite.exe
+
+# Windows (from deployment package)
+./CyberReconSuite-v1.7-Windows/CyberReconSuite.exe
 ```
+
+## 📦 Windows Distribution
+
+### Pre-built Windows Releases
+Download the latest Windows release from [GitHub Releases](https://github.com/mllinman/cyberrecon-suite/releases):
+
+- **`CyberReconSuite-v1.7-Setup.exe`** - Windows installer with automatic setup
+- **`CyberReconSuite-v1.7-Windows.zip`** - Portable Windows package
+
+### Installation Options
+1. **Installer (.exe)**: Run as Administrator for system-wide installation
+2. **Portable (.zip)**: Extract and run `CyberReconSuite.exe` directly
+3. **Build from Source**: Follow the Windows build instructions above
 
 ## New Features in v1.7
 

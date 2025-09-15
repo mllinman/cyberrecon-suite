@@ -1,0 +1,83 @@
+name: Windows Build and Release
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.7.0'
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_mingw'
+        tools: 'tools_mingw90'
+        cache: true
+        
+    - name: Setup MinGW
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        platform: x64
+        
+    - name: Configure CMake
+      run: |
+        mkdir build
+        cd build
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}
+        
+    - name: Build application
+      run: |
+        cd build
+        cmake --build . --config Release --parallel
+        
+    - name: Deploy Qt dependencies
+      run: |
+        cd build
+        windeployqt --release --no-translations --no-system-d3d-compiler CyberReconSuite.exe
+        
+    - name: Create deployment package
+      run: |
+        mkdir CyberReconSuite-Windows
+        cp build/CyberReconSuite.exe CyberReconSuite-Windows/
+        cp -r build/*.dll CyberReconSuite-Windows/ 2>$null || echo "No DLLs to copy"
+        cp -r build/platforms CyberReconSuite-Windows/ 2>$null || echo "No platforms folder"
+        cp README.md CyberReconSuite-Windows/ 2>$null || echo "No README"
+        cp LICENSE CyberReconSuite-Windows/ 2>$null || echo "No LICENSE"
+        
+    - name: Create installer with NSIS
+      uses: joncloud/makensis-action@v4
+      with:
+        script-file: installer.nsi
+        
+    - name: Create ZIP archive
+      run: |
+        Compress-Archive -Path "CyberReconSuite-Windows" -DestinationPath "CyberReconSuite-Windows.zip"
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-build
+        path: |
+          CyberReconSuite-Windows.zip
+          CyberReconSuite-v1.7-Setup.exe
+          
+    - name: Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          CyberReconSuite-Windows.zip
+          CyberReconSuite-v1.7-Setup.exe
+        generate_release_notes: true

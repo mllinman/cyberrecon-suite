@@ -172,6 +172,13 @@ dist/
 *.7z
 *.rar
 
+# Windows deployment packages  
+CyberReconSuite-*-Windows/
+CyberReconSuite-*-Setup.exe
+CyberReconSuite-*-Windows.zip
+CyberReconSuite-*-Windows.tar.gz
+build-windows/
+
 # Test results
 test_results/
 *.xml
