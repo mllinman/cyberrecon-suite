@@ -32,10 +32,9 @@ int main(int argc, char *argv[]) {
     }
     
     QString username = loginWindow.getCurrentUser();
-    bool hasSubscription = loginWindow.isSubscriptionActive();
     
     // Create and show main window
-    ModernMainWindow window(username, hasSubscription);
+    ModernMainWindow window(username);
     window.setWindowTitle("CyberRecon Suite v1.7 (C++ Qt Build)");
     window.show();
 

@@ -4,8 +4,6 @@
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QChartView>
 
-using namespace QtCharts;
-
 class SIEMDashboard : public QWidget {
     Q_OBJECT
 public:

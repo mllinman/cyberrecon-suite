@@ -13,8 +13,6 @@
 #include <QtCharts/QBarSet>
 #include <QtCharts/QChartView>
 
-using namespace QtCharts;
-
 class EDRMonitoring : public QWidget {
     Q_OBJECT
 public:

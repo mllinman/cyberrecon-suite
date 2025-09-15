@@ -5,8 +5,6 @@
 #include <QtCharts/QBarSet>
 #include <QtCharts/QChartView>
 
-using namespace QtCharts;
-
 class ComplianceDashboard : public QWidget {
     Q_OBJECT
 public:
