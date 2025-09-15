@@ -8,12 +8,12 @@
 #include <QSqlQuery>
 #include <QTimer>
 #include <QtCharts/QHorizontalBarSeries>
+#include <QtCharts/QBarSeries>
 #include <QtCharts/QBarSet>
 #include <QtCharts/QChartView>
 #include <QtCharts/QChart>
 #include <QPainter>
 
-using namespace QtCharts;
 
 ComplianceDashboard::ComplianceDashboard(QWidget *parent) : QWidget(parent) {
     auto *layout = new QVBoxLayout(this);

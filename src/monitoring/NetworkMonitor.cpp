@@ -460,9 +460,9 @@ void NetworkMonitor::simulatePacketCapture() {
     };
     
     // Add 1-3 random packets per update
-    int packetsToAdd = 1 + (qrand() % 3);
+    int packetsToAdd = 1 + (QRandomGenerator::global()->bounded(3));
     for (int i = 0; i < packetsToAdd; ++i) {
-        PacketData packet = samplePackets[qrand() % samplePackets.size()];
+        PacketData packet = samplePackets[QRandomGenerator::global()->bounded(samplePackets.size())];
         
         QString currentTime = QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
         addPacketToTable(currentTime, packet.source, packet.dest, 
@@ -549,10 +549,10 @@ TCP Header:
   Flags: [SYN, ACK]
   Window Size: 65535
   Checksum: 0x%5
-        )").arg(qrand() % 65535).arg(qrand() % 65535)
-           .arg(qrand(), 8, 16, QChar('0'))
-           .arg(qrand(), 8, 16, QChar('0'))
-           .arg(qrand() % 65535, 4, 16, QChar('0'));
+        )").arg(QRandomGenerator::global()->bounded(65535)).arg(QRandomGenerator::global()->bounded(65535))
+           .arg(QRandomGenerator::global()->generate(), 8, 16, QChar('0'))
+           .arg(QRandomGenerator::global()->generate(), 8, 16, QChar('0'))
+           .arg(QRandomGenerator::global()->bounded(65535), 4, 16, QChar('0'));
     } else if (protocol == "UDP") {
         return QString(R"(
 UDP Header:
@@ -560,8 +560,8 @@ UDP Header:
   Destination Port: %2
   Length: %3
   Checksum: 0x%4
-        )").arg(qrand() % 65535).arg(qrand() % 65535)
-           .arg(qrand() % 1500).arg(qrand() % 65535, 4, 16, QChar('0'));
+        )").arg(QRandomGenerator::global()->bounded(65535)).arg(QRandomGenerator::global()->bounded(65535))
+           .arg(QRandomGenerator::global()->bounded(1500)).arg(QRandomGenerator::global()->bounded(65535), 4, 16, QChar('0'));
     } else if (protocol == "ICMP") {
         return QString(R"(
 ICMP Header:
@@ -570,9 +570,9 @@ ICMP Header:
   Checksum: 0x%1
   Identifier: 0x%2
   Sequence: %3
-        )").arg(qrand() % 65535, 4, 16, QChar('0'))
-           .arg(qrand() % 65535, 4, 16, QChar('0'))
-           .arg(qrand() % 65535);
+        )").arg(QRandomGenerator::global()->bounded(65535), 4, 16, QChar('0'))
+           .arg(QRandomGenerator::global()->bounded(65535), 4, 16, QChar('0'))
+           .arg(QRandomGenerator::global()->bounded(65535));
     } else {
         return QString("Protocol-specific details for %1 packet").arg(protocol);
     }
@@ -734,7 +734,6 @@ QString NetworkMonitor::simulatePortScan(const QString &host) {
     QStringList commonPorts = {"22", "23", "25", "53", "80", "110", "143", "443", "993", "995"};
     QStringList openPorts;
     
-    int numOpenPorts = qrand() % 5; // 0-4 open ports
     int numOpenPorts = QRandomGenerator::global()->bounded(5); // 0-4 open ports
     for (int i = 0; i < numOpenPorts; ++i) {
         if (!commonPorts.isEmpty()) {
@@ -761,7 +760,7 @@ QString NetworkMonitor::detectOS(const QString &host) {
         "CentOS 8"
     };
     
-    return osList[qrand() % osList.size()];
+    return osList[QRandomGenerator::global()->bounded(osList.size())];
     return osList[QRandomGenerator::global()->bounded(osList.size())];
 }
 

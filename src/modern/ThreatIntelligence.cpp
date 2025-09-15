@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QRandomGenerator>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QTextStream>
@@ -205,7 +206,7 @@ void ThreatIntelligence::refreshFeeds() {
         "Phishing campaign targeting financial sector detected"
     };
     
-    QString update = feedUpdates[qrand() % feedUpdates.size()];
+    QString update = feedUpdates[QRandomGenerator::global()->bounded(feedUpdates.size())];
     resultsDisplay->append(QString("<font color='#4caf50'>[FEED UPDATE] %1</font>").arg(update));
     
     // Add some sample IOCs to the table

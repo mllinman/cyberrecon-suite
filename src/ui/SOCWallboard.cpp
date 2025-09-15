@@ -1,4 +1,5 @@
 #include "SOCWallboard.h"
+#include <QRandomGenerator>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -14,7 +15,6 @@
 #include <QSqlQuery>
 #include <QRegularExpression>
 
-using namespace QtCharts;
 
 SOCWallboard::SOCWallboard(QWidget *parent) : QWidget(parent) {
     auto *mainLayout = new QVBoxLayout(this);
@@ -162,7 +162,7 @@ void SOCWallboard::updateCharts() {
     QSqlQuery q5("SELECT timestamp FROM events WHERE panel='Forensics' ORDER BY timestamp DESC LIMIT 10");
     int f = 0;
     while(q5.next()) {
-        forSeries->append(f++, qrand() % 5 + 1);
+        forSeries->append(f++, QRandomGenerator::global()->bounded(5) + 1);
     }
     if (forSeries->count() == 0) {
         forSeries->append(0, 0);

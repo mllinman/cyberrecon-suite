@@ -11,7 +11,6 @@
 #include <QtCharts/QChart>
 #include <QPainter>
 
-using namespace QtCharts;
 
 SIEMDashboard::SIEMDashboard(QWidget *parent) : QWidget(parent) {
     auto *layout = new QVBoxLayout(this);

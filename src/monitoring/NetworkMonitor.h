@@ -47,7 +47,7 @@ private:
     void setupStyling();
     void addPacketToTable(const QString &time, const QString &source, const QString &dest, 
                          const QString &protocol, const QString &length, const QString &info);
-    void addScanResult(const QString &host, const QString &status, const QString &ports, const QString &os);
+    void addScanResult(const QString &host, const QString &status, const QString &ports, const QString &os, const QString &services);
     QString generatePacketDetails(const QString &protocol, const QString &source, const QString &dest);
     QString simulatePortScan(const QString &host);
     QString detectOS(const QString &host);

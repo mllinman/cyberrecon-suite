@@ -13,6 +13,7 @@
 #include <QTextStream>
 #include <QDateTime>
 #include <QRandomGenerator>
+#include <QThread>
 #include <QApplication>
 #include <QTimer>
 #include <QtCharts/QBarSet>
@@ -21,7 +22,6 @@
 #include <QtCharts/QChart>
 #include <QPainter>
 
-using namespace QtCharts;
 
 EDRMonitoring::EDRMonitoring(QWidget *parent) 
     : QWidget(parent), totalEndpoints(0), totalThreats(0), quarantinedEndpoints(0) {

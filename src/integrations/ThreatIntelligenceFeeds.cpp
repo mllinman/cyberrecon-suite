@@ -8,6 +8,7 @@
 #include <QHeaderView>
 #include <QSqlQuery>
 #include <QMessageBox>
+#include <QSplitter>
 #include <QFileDialog>
 #include <QTextStream>
 #include <QDateTime>

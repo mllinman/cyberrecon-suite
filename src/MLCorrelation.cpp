@@ -167,7 +167,7 @@ void MLCorrelation::autoCorrelate() {
         "Detected coordinated attack campaign indicators"
     };
     
-    QString result = autoResults[qrand() % autoResults.size()];
+    QString result = autoResults[QRandomGenerator::global()->bounded(autoResults.size())];
     QString severity = result.contains("attack") || result.contains("malware") ? "Warning" : "Info";
     QString color = (severity == "Warning") ? "#ff9800" : "#4caf50";
     
