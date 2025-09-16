@@ -61,8 +61,8 @@ const Home = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to="/products/cyberrecon" className="btn-primary text-lg px-8 py-4">
-                Explore CyberRecon Suite
+              <Link to="/subscribe" className="btn-primary text-lg px-8 py-4">
+                Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
               <Link to="/contact" className="btn-secondary text-lg px-8 py-4">
@@ -155,7 +155,7 @@ const Home = () => {
               Join hundreds of security professionals using CyberRecon Suite for advanced threat detection and response.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/products/cyberrecon" className="btn-primary text-lg px-8 py-4">
+              <Link to="/subscribe" className="btn-primary text-lg px-8 py-4">
                 Start Free Trial
               </Link>
               <Link to="/contact" className="btn-secondary text-lg px-8 py-4">
