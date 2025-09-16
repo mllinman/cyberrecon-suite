@@ -14,6 +14,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import Subscribe from './pages/Subscribe'
 import { AuthProvider } from './contexts/AuthContext'
 import { StripeProvider } from './contexts/StripeContext'
 import AccessControl from './components/AccessControl'
@@ -36,6 +37,7 @@ function App() {
               <Route path="/products/custom" element={<CustomSolutions />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/subscribe" element={<Subscribe />} />
               <Route path="/login" element={<Login />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/firewall" element={
