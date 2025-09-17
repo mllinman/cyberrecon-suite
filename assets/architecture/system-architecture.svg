@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e9ecef;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="layer1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#64b5f6;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#42a5f5;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="layer2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4fc3f7;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#29b6f6;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="layer3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#26c6da;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#00acc1;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="layer4" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#26a69a;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#00897b;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="layer5" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#66bb6a;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#4caf50;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1000" height="600" fill="url(#bg)"/>
+  
+  <!-- Title -->
+  <text x="500" y="40" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#1a1a1a" text-anchor="middle">
+    CyberRecon Suite Architecture
+  </text>
+  
+  <!-- Layer 1: Presentation Layer -->
+  <rect x="50" y="80" width="900" height="80" rx="8" fill="url(#layer1)" stroke="#1976d2" stroke-width="2"/>
+  <text x="500" y="110" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#ffffff" text-anchor="middle">
+    Presentation Layer
+  </text>
+  <text x="120" y="135" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Qt6 Modern UI</text>
+  <text x="250" y="135" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">React Web Interface</text>
+  <text x="400" y="135" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Responsive Design</text>
+  <text x="550" y="135" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Theme System</text>
+  <text x="680" y="135" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Real-time Updates</text>
+  <text x="820" y="135" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Dashboards</text>
+  
+  <!-- Layer 2: Business Logic -->
+  <rect x="50" y="180" width="900" height="80" rx="8" fill="url(#layer2)" stroke="#0288d1" stroke-width="2"/>
+  <text x="500" y="210" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#ffffff" text-anchor="middle">
+    Business Logic Layer
+  </text>
+  <text x="100" y="235" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">SIEM Engine</text>
+  <text x="200" y="235" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">EDR Processing</text>
+  <text x="320" y="235" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Threat Analysis</text>
+  <text x="450" y="235" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">SOAR Automation</text>
+  <text x="580" y="235" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">ML Correlation</text>
+  <text x="700" y="235" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Case Management</text>
+  <text x="830" y="235" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Compliance</text>
+  
+  <!-- Layer 3: Security Services -->
+  <rect x="50" y="280" width="900" height="80" rx="8" fill="url(#layer3)" stroke="#0097a7" stroke-width="2"/>
+  <text x="500" y="310" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#ffffff" text-anchor="middle">
+    Security Services Layer
+  </text>
+  <text x="80" y="335" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Penetration Testing</text>
+  <text x="220" y="335" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Network Monitoring</text>
+  <text x="360" y="335" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Wireless Security</text>
+  <text x="500" y="335" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Digital Forensics</text>
+  <text x="640" y="335" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Threat Intelligence</text>
+  <text x="800" y="335" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Vulnerability Scanning</text>
+  
+  <!-- Layer 4: Integration Layer -->
+  <rect x="50" y="380" width="900" height="80" rx="8" fill="url(#layer4)" stroke="#00796b" stroke-width="2"/>
+  <text x="500" y="410" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#ffffff" text-anchor="middle">
+    Integration Layer
+  </text>
+  <text x="100" y="435" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">API Gateway</text>
+  <text x="220" y="435" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Threat Feeds</text>
+  <text x="340" y="435" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">External Tools</text>
+  <text x="460" y="435" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Payment System</text>
+  <text x="580" y="435" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Cloud Services</text>
+  <text x="700" y="435" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Notifications</text>
+  <text x="820" y="435" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Reporting</text>
+  
+  <!-- Layer 5: Data Layer -->
+  <rect x="50" y="480" width="900" height="80" rx="8" fill="url(#layer5)" stroke="#388e3c" stroke-width="2"/>
+  <text x="500" y="510" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#ffffff" text-anchor="middle">
+    Data Layer
+  </text>
+  <text x="100" y="535" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">SQLite Databases</text>
+  <text x="240" y="535" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Authentication DB</text>
+  <text x="380" y="535" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Events DB</text>
+  <text x="500" y="535" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Cases DB</text>
+  <text x="600" y="535" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">SOAR Rules</text>
+  <text x="720" y="535" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Compliance DB</text>
+  <text x="840" y="535" font-family="Inter, sans-serif" font-size="12" fill="#ffffff">Audit Trail</text>
+  
+  <!-- Arrows showing data flow -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+     refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+    </marker>
+  </defs>
+  
+  <!-- Vertical arrows -->
+  <line x1="500" y1="160" x2="500" y2="175" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="500" y1="260" x2="500" y2="275" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="500" y1="360" x2="500" y2="375" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="500" y1="460" x2="500" y2="475" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+</svg>
