@@ -73,9 +73,79 @@
     animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   
-  .animate-bounce-slow {
-    animation: bounce 2s infinite;
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
   }
+  
+  .animate-gradient {
+    animation: gradient-shift 8s ease infinite;
+    background-size: 400% 400%;
+  }
+  
+  .animate-glow-pulse {
+    animation: glow-pulse 3s ease-in-out infinite alternate;
+  }
+  
+  .glass-morphism {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-card {
+    background: rgba(30, 41, 59, 0.1);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(45deg, transparent, rgba(var(--color-primary-500), 0.1), transparent);
+    border: 1px solid transparent;
+  }
+  
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    background: linear-gradient(45deg, 
+      rgba(var(--color-primary-500), 0.5), 
+      rgba(var(--color-primary-400), 0.3), 
+      rgba(var(--color-primary-600), 0.5)
+    );
+    border-radius: inherit;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(-5px) rotate(-1deg); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes glow-pulse {
+  0% { 
+    box-shadow: 0 0 20px rgba(var(--color-primary-500), 0.4);
+    filter: brightness(1);
+  }
+  100% { 
+    box-shadow: 0 0 40px rgba(var(--color-primary-500), 0.8);
+    filter: brightness(1.2);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce 2s infinite;
 }
 
 /* Custom scrollbar */

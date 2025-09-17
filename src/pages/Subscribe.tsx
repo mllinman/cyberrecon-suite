@@ -128,51 +128,74 @@ const Subscribe = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-primary-900/20 to-dark-800/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-gradient-to-br from-primary-900/20 via-slate-800/30 to-primary-800/20 relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-1/4 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-primary-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        </div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center"
+            className="text-center glass-morphism rounded-3xl p-12"
           >
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            <motion.h1 
+              className="text-5xl md:text-6xl font-bold mb-6"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
               <span className="text-white">Choose Your</span>
               <br />
-              <span className="gradient-text">Security Plan</span>
-            </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+              <span className="gradient-text animate-glow-pulse">Security Plan</span>
+            </motion.h1>
+            <motion.p 
+              className="text-xl text-gray-300 max-w-3xl mx-auto mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
               Start securing your organization with CyberRecon Suite. Choose the plan that fits your needs and scale as you grow.
-            </p>
+            </motion.p>
 
             {/* Billing Toggle */}
-            <div className="flex items-center justify-center space-x-4 mb-8">
+            <motion.div 
+              className="flex items-center justify-center space-x-4 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
               <span className={`text-sm ${billingCycle === 'monthly' ? 'text-white' : 'text-gray-400'}`}>
                 Monthly
               </span>
               <button
                 onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-                className={`relative w-16 h-8 rounded-full transition-colors ${
-                  billingCycle === 'yearly' ? 'bg-primary-500' : 'bg-gray-600'
+                className={`relative w-16 h-8 rounded-full transition-all duration-300 ${
+                  billingCycle === 'yearly' ? 'bg-primary-500 shadow-lg shadow-primary-500/30' : 'bg-gray-600'
                 }`}
               >
-                <div
-                  className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${
-                    billingCycle === 'yearly' ? 'translate-x-9' : 'translate-x-1'
-                  }`}
+                <motion.div
+                  className="absolute top-1 w-6 h-6 bg-white rounded-full"
+                  animate={{
+                    x: billingCycle === 'yearly' ? 36 : 4
+                  }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
               </button>
               <span className={`text-sm ${billingCycle === 'yearly' ? 'text-white' : 'text-gray-400'}`}>
                 Yearly
                 <span className="text-primary-400 ml-1">(Save 17%)</span>
               </span>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
       {/* Pricing Plans */}
-      <section className="py-20">
+      <section className="py-20 bg-gradient-to-b from-slate-900/30 to-slate-800/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {Object.entries(plans).map(([planKey, plan], index) => (
@@ -181,42 +204,74 @@ const Subscribe = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                className={`relative card group ${plan.popular ? 'ring-2 ring-primary-500 glow-effect' : ''}`}
+                className={`relative glass-card rounded-2xl p-8 group hover:scale-105 transition-all duration-300 ${
+                  plan.popular 
+                    ? 'ring-2 ring-primary-500 shadow-2xl shadow-primary-500/20' 
+                    : 'hover:shadow-xl'
+                }`}
+                whileHover={{ y: -10 }}
               >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="bg-primary-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-                      Most Popular
+                  <motion.div 
+                    className="absolute -top-4 left-1/2 transform -translate-x-1/2"
+                    animate={{ y: [0, -2, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
+                      ✨ Most Popular
                     </div>
-                  </div>
+                  </motion.div>
                 )}
 
                 <div className="text-center mb-8">
-                  <plan.icon className="h-12 w-12 text-primary-500 mx-auto mb-4" />
+                  <motion.div
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.6 }}
+                    className="inline-block"
+                  >
+                    <plan.icon className="h-12 w-12 text-primary-500 mx-auto mb-4" />
+                  </motion.div>
                   <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
                   <p className="text-gray-400 mb-4">{plan.description}</p>
                   
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-white">
+                    <motion.span 
+                      className="text-4xl font-bold text-white"
+                      key={`${planKey}-${billingCycle}`}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
                       ${getDiscountedPrice(plan.price[billingCycle])}
-                    </span>
+                    </motion.span>
                     <span className="text-gray-400 ml-1">
                       /{billingCycle === 'monthly' ? 'month' : 'year'}
                     </span>
                     {billingCycle === 'yearly' && (
-                      <div className="text-sm text-primary-400 mt-1">
-                        Save ${plan.price[billingCycle] - getDiscountedPrice(plan.price[billingCycle])} per year
-                      </div>
+                      <motion.div 
+                        className="text-sm text-primary-400 mt-1"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        💰 Save ${plan.price[billingCycle] - getDiscountedPrice(plan.price[billingCycle])} per year
+                      </motion.div>
                     )}
                   </div>
                 </div>
 
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start space-x-3">
+                    <motion.li 
+                      key={idx} 
+                      className="flex items-start space-x-3"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 + idx * 0.05 }}
+                    >
                       <Check className="h-5 w-5 text-primary-500 mt-0.5 flex-shrink-0" />
                       <span className="text-gray-300 text-sm">{feature}</span>
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
 
@@ -234,17 +289,21 @@ const Subscribe = () => {
                   </div>
                 )}
 
-                <button
+                <motion.button
                   onClick={() => setSelectedPlan(planKey as any)}
-                  className={`w-full py-3 px-6 rounded-lg font-medium transition-colors ${
+                  className={`w-full py-4 px-6 rounded-xl font-medium transition-all duration-300 ${
                     plan.popular
-                      ? 'btn-primary'
-                      : 'bg-dark-700 text-white hover:bg-dark-600 border border-dark-600'
+                      ? 'btn-primary animate-glow-pulse shadow-lg shadow-primary-500/30'
+                      : 'glass-morphism text-white hover:scale-105 border border-slate-600/50 hover:border-primary-500/50'
                   }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  Get Started
-                  <ArrowRight className="ml-2 h-4 w-4 inline" />
-                </button>
+                  <span className="flex items-center justify-center">
+                    Get Started
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </span>
+                </motion.button>
               </motion.div>
             ))}
           </div>
