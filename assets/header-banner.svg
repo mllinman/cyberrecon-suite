@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f0f23;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#64b5f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#42a5f5;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="300" fill="url(#bg)"/>
+  
+  <!-- Grid pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-width="0.5" opacity="0.1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="300" fill="url(#grid)"/>
+  
+  <!-- Main shield logo -->
+  <g transform="translate(80, 100)">
+    <path d="M50 0C28 1.5 10 7.5 10 7.5s0 36 3 51c4.5 19.5 33 37.5 37 37.5s32.5-18 37-37.5c3-15 3-51 3-51S72 1.5 50 0zm0 87c-12-6-33-21-33-45V13.5c9-3 24-7.5 33-7.5s24 4.5 33 7.5V42c0 24-21 39-33 45z" fill="url(#accent)" filter="url(#glow)"/>
+    <path d="M50 18c-10.5 1.5-15 9-15 9s0 18 15 22.5c15-4.5 15-22.5 15-22.5s-4.5-7.5-15-9zm0 25.5c-9-4.5-9-15-9-15s6-4.5 9-4.5 9 4.5 9 4.5-1.5 10.5-9 15z" fill="#ffffff" opacity="0.9"/>
+  </g>
+  
+  <!-- Title text -->
+  <text x="220" y="130" font-family="Inter, sans-serif" font-size="48" font-weight="800" fill="url(#accent)" filter="url(#glow)">
+    CyberRecon Suite
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="220" y="165" font-family="Inter, sans-serif" font-size="20" font-weight="400" fill="#a0a0a0">
+    Modern Cybersecurity Operations Platform
+  </text>
+  
+  <!-- Feature highlights -->
+  <g transform="translate(220, 190)">
+    <text x="0" y="0" font-family="JetBrains Mono, monospace" font-size="14" font-weight="500" fill="#64b5f6">■</text>
+    <text x="20" y="0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#ffffff" opacity="0.8">SIEM/EDR Platform</text>
+    
+    <text x="180" y="0" font-family="JetBrains Mono, monospace" font-size="14" font-weight="500" fill="#64b5f6">■</text>
+    <text x="200" y="0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#ffffff" opacity="0.8">Threat Intelligence</text>
+    
+    <text x="360" y="0" font-family="JetBrains Mono, monospace" font-size="14" font-weight="500" fill="#64b5f6">■</text>
+    <text x="380" y="0" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#ffffff" opacity="0.8">SOAR Automation</text>
+    
+    <text x="0" y="25" font-family="JetBrains Mono, monospace" font-size="14" font-weight="500" fill="#64b5f6">■</text>
+    <text x="20" y="25" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#ffffff" opacity="0.8">Penetration Testing</text>
+    
+    <text x="180" y="25" font-family="JetBrains Mono, monospace" font-size="14" font-weight="500" fill="#64b5f6">■</text>
+    <text x="200" y="25" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#ffffff" opacity="0.8">Digital Forensics</text>
+    
+    <text x="360" y="25" font-family="JetBrains Mono, monospace" font-size="14" font-weight="500" fill="#64b5f6">■</text>
+    <text x="380" y="25" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#ffffff" opacity="0.8">Compliance Management</text>
+  </g>
+  
+  <!-- Version badge -->
+  <g transform="translate(900, 120)">
+    <rect x="0" y="0" width="120" height="30" rx="15" fill="rgba(100, 181, 246, 0.2)" stroke="#64b5f6" stroke-width="1"/>
+    <text x="60" y="20" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#64b5f6" text-anchor="middle">
+      Version 1.7
+    </text>
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="1050" cy="80" r="2" fill="#64b5f6" opacity="0.6">
+    <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="1080" cy="120" r="1.5" fill="#42a5f5" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="1100" cy="180" r="1" fill="#64b5f6" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
+  </circle>
+</svg>

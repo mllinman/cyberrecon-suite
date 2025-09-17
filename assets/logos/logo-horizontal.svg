@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#64b5f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#42a5f5;stop-opacity:1" />
+    </linearGradient>
+    <filter id="logoGlow">
+      <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Shield icon -->
+  <g transform="translate(5, 5)">
+    <path d="M25 0C15 0.75 5 3.75 5 3.75s0 18 1.5 25.5c2.25 9.75 16.5 18.75 18.5 18.75s16.25-9 18.5-18.75c1.5-7.5 1.5-25.5 1.5-25.5S35 0.75 25 0zm0 43.5c-6-3-16.5-10.5-16.5-22.5V6.75c4.5-1.5 12-3.75 16.5-3.75s12 2.25 16.5 3.75V21c0 12-10.5 19.5-16.5 22.5z" 
+          fill="url(#logoGradient)" filter="url(#logoGlow)"/>
+    <path d="M25 9c-5.25 0.75-7.5 4.5-7.5 4.5s0 9 7.5 11.25c7.5-2.25 7.5-11.25 7.5-11.25s-2.25-3.75-7.5-4.5zm0 12.75c-4.5-2.25-4.5-7.5-4.5-7.5s3-2.25 4.5-2.25 4.5 2.25 4.5 2.25-0.75 5.25-4.5 7.5z" 
+          fill="#ffffff" opacity="0.9"/>
+  </g>
+  
+  <!-- Company text -->
+  <text x="60" y="25" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#1a1a1a">
+    CyberRecon
+  </text>
+  <text x="60" y="42" font-family="Inter, sans-serif" font-size="12" font-weight="400" fill="#666666">
+    Suite
+  </text>
+</svg>
