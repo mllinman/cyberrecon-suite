@@ -121,7 +121,26 @@ const Dashboard = () => {
             >
               <h2 className="text-xl font-semibold text-white mb-6">🔴 Live Security Dashboards</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Link 
+                  to="/siem"
+                  className="flex items-center justify-between p-4 bg-dark-700/50 rounded-lg hover:bg-primary-500/10 transition-colors group"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-primary-500/20 rounded-lg flex items-center justify-center">
+                      <Shield className="h-6 w-6 text-primary-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white group-hover:text-primary-400 transition-colors">SIEM Dashboard</h3>
+                      <p className="text-sm text-gray-400">Security events & monitoring</p>
+                      <p className="text-xs text-green-400">🔴 Live SIEM Active</p>
+                    </div>
+                  </div>
+                  <div className="text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    →
+                  </div>
+                </Link>
+
                 <Link 
                   to="/threat-intelligence"
                   className="flex items-center justify-between p-4 bg-dark-700/50 rounded-lg hover:bg-primary-500/10 transition-colors group"

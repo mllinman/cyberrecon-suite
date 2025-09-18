@@ -17,6 +17,7 @@ import Dashboard from './pages/Dashboard'
 import Subscribe from './pages/Subscribe'
 import ThreatIntelligenceDashboard from './components/ThreatIntelligenceDashboard'
 import NetworkMonitoringDashboard from './components/NetworkMonitoringDashboard'
+import SIEMDashboard from './components/SIEMDashboard'
 import { AuthProvider } from './contexts/AuthContext'
 import { StripeProvider } from './contexts/StripeContext'
 import AccessControl from './components/AccessControl'
@@ -42,6 +43,11 @@ function App() {
               <Route path="/subscribe" element={<Subscribe />} />
               <Route path="/login" element={<Login />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/siem" element={
+                <AccessControl requiredPlan="individual" feature="SIEM Dashboard">
+                  <SIEMDashboard />
+                </AccessControl>
+              } />
               <Route path="/threat-intelligence" element={
                 <AccessControl requiredPlan="individual" feature="Threat Intelligence Dashboard">
                   <ThreatIntelligenceDashboard />
