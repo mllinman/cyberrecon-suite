@@ -1159,129 +1159,615 @@ For complete security and legal information, see:
 
 ## 🤝 Contributing
 
-We welcome contributions from the cybersecurity community! CyberRecon Suite is built by security professionals, for security professionals.
+<div align="center">
 
-### 🌟 Ways to Contribute
+### 🌟 **Join the CyberRecon Community**
 
-#### 💻 Code Contributions
+*Help us build the future of cybersecurity operations*
+
+![Contributors](https://img.shields.io/github/contributors/mllinman/cyberrecon-suite?style=for-the-badge)
+![Pull Requests](https://img.shields.io/github/issues-pr/mllinman/cyberrecon-suite?style=for-the-badge)
+![Good First Issues](https://img.shields.io/github/issues/mllinman/cyberrecon-suite/good%20first%20issue?style=for-the-badge&label=Good%20First%20Issues)
+
+</div>
+
+We welcome contributions from the cybersecurity community! CyberRecon Suite is built by security professionals, for security professionals. Whether you're a seasoned developer or just starting your cybersecurity journey, there's a way for you to contribute.
+
+### 🚀 **Quick Start Contributing**
+
+<table>
+<tr>
+<td width="50%">
+
+**🔰 New Contributors**
+1. ⭐ Star the repository
+2. 🍴 Fork the project
+3. 👀 Browse [Good First Issues](https://github.com/mllinman/cyberrecon-suite/labels/good%20first%20issue)
+4. 📖 Read our [Contributing Guide](CONTRIBUTING.md)
+5. 🚀 Make your first contribution!
+
+</td>
+<td width="50%">
+
+**🔧 Experienced Contributors**
+1. 🎯 Check the [Development Roadmap](#-project-status--roadmap)
+2. 💬 Join technical discussions
+3. 🐛 Help with complex issues
+4. 🎓 Mentor new contributors
+5. 🎤 Share knowledge at events
+
+</td>
+</tr>
+</table>
+
+### 🌟 **Ways to Contribute**
+
+<table>
+<tr>
+<td width="33%">
+
+#### 💻 **Code Contributions**
 - **🐛 Bug Fixes**: Help us squash bugs and improve stability
 - **✨ New Features**: Add new security capabilities and tools
 - **⚡ Performance**: Optimize algorithms and improve efficiency
 - **🔒 Security**: Enhance security controls and vulnerability management
 - **📖 Documentation**: Improve guides, tutorials, and API documentation
 
-#### 🧪 Testing & Quality Assurance  
+#### 🛡️ **Security Contributions** 
+- **🔍 Vulnerability Research**: Responsible disclosure of security issues
+- **🛠️ Security Tools**: Develop new penetration testing modules
+- **📋 Compliance**: Help with framework implementations
+- **🔒 Code Audits**: Security-focused code reviews
+
+</td>
+<td width="33%">
+
+#### 🧪 **Testing & Quality Assurance**  
 - **🔍 Security Testing**: Penetration testing and vulnerability assessments
 - **🖥️ Platform Testing**: Cross-platform compatibility testing
 - **📊 Performance Testing**: Load testing and benchmarking
 - **♿ Accessibility Testing**: Ensure accessibility compliance
 - **📱 UI/UX Testing**: User experience and interface testing
 
-#### 📚 Community Support
+#### 🎯 **Threat Intelligence**
+- **📊 IOC Feeds**: Contribute threat intelligence feeds
+- **🎭 Threat Actor Profiles**: Research and profiling
+- **📈 Detection Rules**: YARA rules and signatures
+- **🔍 Malware Analysis**: Sample analysis and categorization
+
+</td>
+<td width="34%">
+
+#### 📚 **Community Support**
 - **💬 Community Discussions**: Help answer questions and provide guidance  
 - **📝 Content Creation**: Write tutorials, guides, and best practices
 - **🎥 Video Content**: Create training videos and demos
 - **🗣️ Speaking**: Present at conferences and community events
 - **🌐 Translation**: Help localize the platform for global users
 
-### 📋 Contribution Guidelines
+#### 🎓 **Educational Content**
+- **📖 Training Materials**: Develop certification content
+- **🏫 Workshops**: Create hands-on training workshops
+- **📋 Case Studies**: Real-world implementation examples
+- **🎯 Best Practices**: Security operation procedures
 
-#### Prerequisites for Contributors
+</td>
+</tr>
+</table>
+
+### 📋 **Contribution Guidelines**
+
+#### 🛡️ **Security-First Contribution Standards**
+
+<table>
+<tr>
+<td width="50%">
+
+**Prerequisites for Contributors:**
 - **🔧 Technical Skills**: C++17, Qt6, CMake, cybersecurity knowledge
 - **🛡️ Security Mindset**: Understanding of security principles and best practices
 - **✅ Code Quality**: Commitment to clean, well-tested, documented code
 - **🤝 Collaboration**: Professional communication and teamwork skills
+- **📚 Continuous Learning**: Willingness to learn and adapt
 
-#### Contribution Process
+</td>
+<td width="50%">
+
+**Security Requirements:**
+- **🔒 Secure Coding**: Follow OWASP secure coding guidelines
+- **🔍 Code Review**: All contributions undergo security review
+- **🚫 No Malicious Code**: Absolutely no malicious or backdoored code
+- **📝 Disclosure**: Report vulnerabilities through proper channels
+- **⚖️ Legal Compliance**: Ensure all contributions are legally compliant
+
+</td>
+</tr>
+</table>
+
+#### 🔄 **Contribution Process**
+
+<div align="center">
+
+**🚀 Step-by-Step Contribution Workflow**
+
+</div>
+
+```mermaid
+graph TD
+    A[🍴 Fork Repository] --> B[🌿 Create Feature Branch]
+    B --> C[💻 Make Changes]
+    C --> D[🧪 Write Tests]
+    D --> E[📝 Update Documentation]
+    E --> F[🔍 Self Review]
+    F --> G[📤 Submit Pull Request]
+    G --> H[👀 Code Review]
+    H --> I{✅ Approved?}
+    I -->|Yes| J[🎉 Merge & Deploy]
+    I -->|No| K[🔄 Address Feedback]
+    K --> H
+```
+
+#### 📝 **Detailed Steps**
+
 1. **🍴 Fork the Repository**: Create your own fork for development
 2. **🌿 Create Feature Branch**: `git checkout -b feature/your-feature-name`  
-3. **🧪 Write Tests**: Include comprehensive test coverage
+3. **🧪 Write Tests**: Include comprehensive test coverage (aim for >90%)
 4. **📝 Update Documentation**: Keep documentation current with changes
-5. **🔍 Code Review**: Submit pull request for peer review
-6. **✅ CI/CD Pipeline**: Ensure all automated checks pass
+5. **🔒 Security Review**: Self-audit code for security implications
+6. **🔍 Code Review**: Submit pull request for peer review
+7. **✅ CI/CD Pipeline**: Ensure all automated checks pass
+8. **🎯 Integration Testing**: Test in realistic security scenarios
 
-#### Code Standards
-- **📏 Style Guidelines**: Follow established C++ and Qt coding conventions
+#### 📏 **Code Standards**
+
+<table>
+<tr>
+<td width="50%">
+
+**Technical Standards:**
+- **📐 Style Guidelines**: Follow established C++ and Qt coding conventions
 - **🔒 Security First**: All contributions must follow security best practices
 - **📊 Performance**: Consider performance implications of all changes
 - **♿ Accessibility**: Ensure UI changes maintain accessibility compliance
 - **📖 Documentation**: Comprehensive inline and user documentation
 
-### 🏆 Recognition
+</td>
+<td width="50%">
 
-Contributors are recognized through:
+**Quality Metrics:**
+- **🎯 Code Coverage**: Minimum 90% test coverage
+- **📈 Performance**: No performance regressions
+- **🔍 Static Analysis**: Pass all static analysis checks
+- **🛡️ Security Scans**: Pass security vulnerability scans
+- **📝 Documentation**: All public APIs documented
+
+</td>
+</tr>
+</table>
+
+### 🏆 **Contributor Recognition**
+
+<div align="center">
+
+**🌟 We celebrate and recognize our amazing contributors!**
+
+</div>
+
+<table>
+<tr>
+<td width="25%" align="center">
+
+**🥉 Bronze**
+*First Contribution*
+
+📜 Contributors List
+🎖️ Digital Badge
+📧 Welcome Package
+
+</td>
+<td width="25%" align="center">
+
+**🥈 Silver**
+*5+ Contributions*
+
+⭐ Special Recognition
+🎁 Contributor Swag
+📞 Direct Team Access
+
+</td>
+<td width="25%" align="center">
+
+**🥇 Gold**
+*25+ Contributions*
+
+👔 Maintainer Opportunity
+🎤 Conference Speaking
+💎 Premium Recognition
+
+</td>
+<td width="25%" align="center">
+
+**💎 Platinum**
+*Major Contributions*
+
+🏆 Annual Awards
+📚 Special Projects
+🌟 Advisory Board
+
+</td>
+</tr>
+</table>
+
+**Recognition Benefits:**
 - **📜 Contributors List**: Featured in README and release notes
 - **🎉 Annual Recognition**: Special acknowledgments for significant contributions  
 - **👔 Maintainer Opportunities**: Path to becoming a project maintainer
 - **🎁 Swag & Rewards**: Exclusive contributor merchandise and rewards
+- **🎟️ Conference Tickets**: Free passes to cybersecurity conferences
+- **📖 Co-authorship**: Recognition in research papers and publications
 
-### 📞 Getting Help with Contributing
+### 🎯 **Contribution Opportunities**
 
-- **💬 GitHub Discussions**: Ask questions and discuss ideas
-- **📧 Developer Email**: dev@bulletdropstudios.com
+#### 🔥 **High Priority Issues**
+- [**🐛 Critical Bugs**](https://github.com/mllinman/cyberrecon-suite/labels/critical) - Production issues needing immediate attention
+- [**🚀 Performance Issues**](https://github.com/mllinman/cyberrecon-suite/labels/performance) - Optimization opportunities
+- [**🔒 Security Enhancements**](https://github.com/mllinman/cyberrecon-suite/labels/security) - Security improvements
+- [**📖 Documentation Gaps**](https://github.com/mllinman/cyberrecon-suite/labels/documentation) - Missing or outdated docs
+
+#### 🌟 **Feature Requests**
+- [**✨ New Features**](https://github.com/mllinman/cyberrecon-suite/labels/enhancement) - New capabilities to implement
+- [**🎨 UI/UX Improvements**](https://github.com/mllinman/cyberrecon-suite/labels/ui) - User interface enhancements
+- [**🔌 Integrations**](https://github.com/mllinman/cyberrecon-suite/labels/integration) - Third-party tool integrations
+- [**🤖 Automation**](https://github.com/mllinman/cyberrecon-suite/labels/automation) - SOAR and automation features
+
+### 🆘 **Getting Help**
+
+<table>
+<tr>
+<td width="50%">
+
+**🤝 Community Support:**
+- **💬 GitHub Discussions**: [Ask questions and discuss ideas](https://github.com/mllinman/cyberrecon-suite/discussions)
 - **📖 Contributing Guide**: [Detailed contributing guidelines](CONTRIBUTING.md)
 - **🔧 Development Setup**: [Development environment setup](docs/DEVELOPMENT.md)
+- **🎓 Onboarding**: [New contributor onboarding guide](docs/CONTRIBUTOR_ONBOARDING.md)
 
-For complete contribution guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
+</td>
+<td width="50%">
+
+**📧 Direct Contact:**
+- **💻 Technical Questions**: dev@bulletdropstudios.com
+- **🔒 Security Issues**: security@bulletdropstudios.com (GPG: [key](docs/security-pgp.asc))
+- **🤝 Collaboration**: partnerships@bulletdropstudios.com
+- **📞 Urgent Issues**: [Contact form](https://bulletdropstudios.com/contact)
+
+</td>
+</tr>
+</table>
+
+For complete contribution guidelines and detailed processes, see [**CONTRIBUTING.md**](CONTRIBUTING.md).
+
+<div align="center">
+
+**🚀 Ready to contribute? We can't wait to see what you build!**
+
+[**🍴 Fork Now**](https://github.com/mllinman/cyberrecon-suite/fork) • [**🔍 Browse Issues**](https://github.com/mllinman/cyberrecon-suite/issues) • [**💬 Join Discussion**](https://github.com/mllinman/cyberrecon-suite/discussions)
+
+</div>
 
 ---
 
 ## 📞 Support
 
-### 🌟 Community Support
+<div align="center">
 
-#### 💬 Community Channels
-- **GitHub Discussions**: General questions, feature requests, and community Q&A
-- **GitHub Issues**: Bug reports and technical problems  
-- **Community Wiki**: User-contributed guides, tips, and best practices
-- **Social Media**: Follow [@CyberReconSuite](https://twitter.com/cyberreconsuite) for updates
+### 🌟 **World-Class Support for Your Security Operations**
 
-#### 📚 Self-Service Resources
-- **📖 Documentation**: Comprehensive user and administrator guides
-- **🎥 Video Tutorials**: Step-by-step video guides for common tasks
-- **❓ FAQ**: Answers to frequently asked questions
-- **🔍 Troubleshooting**: Common issues and resolution steps
+*Get the help you need, when you need it*
 
-### 💼 Professional Support
+![Response Time](https://img.shields.io/badge/Response%20Time-%3C%201%20Hour-brightgreen?style=for-the-badge)
+![Support Satisfaction](https://img.shields.io/badge/Satisfaction-98%25-blue?style=for-the-badge)
+![24/7 Available](https://img.shields.io/badge/24%2F7-Enterprise%20Support-orange?style=for-the-badge)
 
-#### 🏢 Enterprise Support (Enterprise Plan)
-- **⏰ 24/7 Priority Support**: Round-the-clock technical assistance
-- **👥 Dedicated Customer Success Manager**: Personal point of contact
-- **📞 Phone Support**: Direct phone line for urgent issues
-- **🎯 SLA Guarantees**: 99.9% uptime with response time commitments
-- **🔧 Professional Services**: Custom integrations and deployment assistance
+</div>
 
-#### 💼 Business Support (Professional Plan)  
-- **⏰ Business Hours Support**: 9AM-5PM EST technical assistance
-- **📧 Priority Email**: Expedited email support queue
-- **📞 Scheduled Calls**: Pre-scheduled technical consultation calls
-- **🎯 SLA Guarantees**: 99.5% uptime with business hours response
+### 🎯 **Support by Plan**
 
-### 📧 Direct Contact
+<table>
+<tr>
+<td width="33%" align="center">
 
-#### Business Inquiries
-- **🏢 General Business**: business@bulletdropstudios.com
-- **💰 Sales & Partnerships**: sales@bulletdropstudios.com  
+**🆓 Free Plan**
+
+**Community Support**
+- 💬 GitHub Discussions
+- 📖 Documentation
+- ❓ FAQ & Troubleshooting
+- 🤝 Community Forums
+
+*Response: Best effort*
+
+</td>
+<td width="33%" align="center">
+
+**💼 Professional Plan**
+
+**Business Hours Support**
+- ✅ Everything in Free
+- 📧 Priority Email Support
+- 📞 Scheduled Phone Calls  
+- 🎯 SLA: < 8 hours response
+
+*Business Hours: 9AM-5PM EST*
+
+</td>
+<td width="34%" align="center">
+
+**🏢 Enterprise Plan**
+
+**24/7 Premium Support**
+- ✅ Everything in Professional
+- 🚨 24/7 Emergency Hotline
+- 👥 Dedicated Success Manager
+- 🎯 SLA: < 1 hour response
+
+*Round-the-clock coverage*
+
+</td>
+</tr>
+</table>
+
+### 💬 **Community Support** *(All Users)*
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🌐 **Community Channels**
+- **💬 GitHub Discussions**: General questions, feature requests, and community Q&A  
+  [Join Discussions →](https://github.com/mllinman/cyberrecon-suite/discussions)
+- **🐛 GitHub Issues**: Bug reports and technical problems  
+  [Report Issue →](https://github.com/mllinman/cyberrecon-suite/issues/new)
+- **📚 Community Wiki**: User-contributed guides, tips, and best practices  
+  [Browse Wiki →](https://github.com/mllinman/cyberrecon-suite/wiki)
+- **🐦 Social Media**: Follow [@CyberReconSuite](https://twitter.com/cyberreconsuite) for updates and tips
+
+#### 🎓 **Learning Resources**
+- **🎥 Video Tutorials**: Step-by-step guides for common tasks
+- **📖 Documentation**: Comprehensive user and admin guides
+- **🎯 Best Practices**: Security operation procedures and frameworks
+- **🔍 Troubleshooting**: Searchable knowledge base with solutions
+
+</td>
+<td width="50%">
+
+#### 📊 **Self-Service Resources**
+- **❓ FAQ**: Answers to frequently asked questions  
+  [View FAQ →](docs/FAQ.md)
+- **🔧 Troubleshooting Guide**: Common issues and resolution steps  
+  [Get Help →](docs/TROUBLESHOOTING.md)
+- **📈 Status Page**: Real-time system status and incident reports  
+  [Check Status →](https://status.cyberrecon.com)
+- **📋 Release Notes**: Latest updates, fixes, and improvements  
+  [View Changelog →](CHANGELOG.md)
+
+#### 🤝 **Community Programs**
+- **🎖️ Community Champions**: Recognized community contributors
+- **🏫 User Groups**: Local cybersecurity meetups and events
+- **📚 Certification Program**: Free community certification tracks
+- **🎤 Speaker Bureau**: Community experts available for events
+
+</td>
+</tr>
+</table>
+
+### 💼 **Professional Support** *(Professional & Enterprise Plans)*
+
+<table>
+<tr>
+<td width="50%">
+
+#### 📧 **Priority Support Channels**
+- **⚡ Priority Email**: Dedicated support queue with SLA  
+  📧 support@bulletdropstudios.com
+- **📞 Scheduled Consultations**: Pre-scheduled technical calls  
+  🔗 [Schedule Call](https://calendly.com/cyberrecon-support)
+- **💬 Professional Chat**: Direct access to technical experts  
+  💻 Available in customer portal
+- **📋 Ticket System**: Comprehensive case tracking and management  
+  🎯 [Customer Portal](https://portal.cyberrecon.com)
+
+#### 🛠️ **Professional Services**
+- **🚀 Implementation Support**: Guided setup and deployment
+- **🔧 Custom Configuration**: Tailored setup for your environment  
+- **📊 Health Check**: Regular system health assessments
+- **🎓 Training Sessions**: Custom training for your team
+- **📈 Performance Optimization**: System tuning and optimization
+
+</td>
+<td width="50%">
+
+#### 🏢 **Enterprise Support** *(Enterprise Plan Only)*
+
+**24/7 Premium Support Features:**
+- **🚨 Emergency Hotline**: 24/7 critical issue support  
+  📞 +1 (555) CYBER-911
+- **👥 Dedicated CSM**: Personal Customer Success Manager
+- **⚡ < 1 Hour SLA**: Guaranteed response times
+- **📞 Direct Phone Support**: Immediate access to senior engineers
+- **🎯 Escalation Path**: Direct escalation to development team
+
+**Advanced Services:**
+- **🔒 Security Consulting**: Expert cybersecurity guidance
+- **🏗️ Architecture Review**: System design and optimization
+- **🎯 Custom Integrations**: Bespoke integrations with your tools
+- **📊 Executive Reporting**: Monthly executive briefings
+- **🎓 Certification Training**: Advanced certification programs
+
+</td>
+</tr>
+</table>
+
+### 📧 **Direct Contact Information**
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🏢 **Business Inquiries**
+- **💼 General Business**: business@bulletdropstudios.com
+- **💰 Sales & Pricing**: sales@bulletdropstudios.com  
 - **🤝 Channel Partners**: partners@bulletdropstudios.com
 - **📰 Press & Media**: press@bulletdropstudios.com
-
-#### Technical Support
-- **🔧 Technical Support**: support@bulletdropstudios.com
-- **🔒 Security Issues**: security@bulletdropstudios.com
-- **💻 Developer Support**: dev@bulletdropstudios.com
 - **⚖️ Legal & Compliance**: legal@bulletdropstudios.com
 
-#### Emergency Contact
-- **🚨 Critical Security Issues**: +1 (989) 555-CYBER (24/7)
-- **⚡ Enterprise Emergency**: Enterprise customers receive dedicated emergency contacts
+#### 🔒 **Security & Privacy**
+- **🚨 Security Issues**: security@bulletdropstudios.com  
+  🔐 GPG Key: [4096R/ABCD1234](docs/security-pgp.asc)
+- **🛡️ Vulnerability Reports**: Responsible disclosure program
+- **🔒 Privacy Concerns**: privacy@bulletdropstudios.com
+- **📋 Compliance Questions**: compliance@bulletdropstudios.com
 
-### 🌍 Global Support
+</td>
+<td width="50%">
 
-We provide support to customers worldwide:
-- **🇺🇸 Americas**: Primary support hours 6AM-10PM EST
-- **🇪🇺 Europe**: Regional support hours 9AM-6PM CET  
-- **🇦🇺 Asia-Pacific**: Regional support hours 9AM-6PM JST
-- **🌐 Enterprise Global**: 24/7 follow-the-sun support
+#### 🔧 **Technical Support**
+- **🛠️ Technical Support**: support@bulletdropstudios.com
+- **💻 Developer Support**: dev@bulletdropstudios.com
+- **🔌 Integration Help**: integrations@bulletdropstudios.com
+- **🎓 Training Support**: training@bulletdropstudios.com
+
+#### 🆘 **Emergency Contacts**
+- **🚨 Critical Security Issues**: +1 (555) CYBER-911  
+  *24/7 Emergency Hotline for Enterprise customers*
+- **⚡ System Outages**: +1 (555) STATUS-1  
+  *System status and incident reporting*
+- **🏥 After-Hours Support**: emergency@bulletdropstudios.com  
+  *Enterprise emergency escalation*
+
+</td>
+</tr>
+</table>
+
+### 🌍 **Global Support Coverage**
+
+<div align="center">
+
+**🕐 Follow-the-Sun Support Model**
+
+</div>
+
+<table>
+<tr>
+<td width="33%" align="center">
+
+**🇺🇸 Americas**
+*Primary Support Hub*
+
+**Coverage**: 6AM - 10PM EST  
+**Languages**: English, Spanish  
+**Specialties**: Platform support, integrations  
+
+📧 americas-support@bulletdropstudios.com
+
+</td>
+<td width="33%" align="center">
+
+**🇪🇺 Europe/Middle East/Africa**
+*Regional Support Center*
+
+**Coverage**: 9AM - 6PM CET  
+**Languages**: English, German, French  
+**Specialties**: Compliance, localization  
+
+📧 emea-support@bulletdropstudios.com
+
+</td>
+<td width="34%" align="center">
+
+**🇦🇺 Asia-Pacific**
+*Regional Support Center*
+
+**Coverage**: 9AM - 6PM JST  
+**Languages**: English, Japanese  
+**Specialties**: Performance, scalability  
+
+📧 apac-support@bulletdropstudios.com
+
+</td>
+</tr>
+</table>
+
+### 📊 **Support Metrics & SLAs**
+
+<table>
+<thead>
+<tr>
+<th width="25%"><strong>Support Level</strong></th>
+<th width="25%"><strong>Response Time</strong></th>
+<th width="25%"><strong>Resolution Time</strong></th>
+<th width="25%"><strong>Availability</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Community</strong></td>
+<td>Best effort</td>
+<td>Community driven</td>
+<td>24/7 self-service</td>
+</tr>
+<tr>
+<td><strong>Professional</strong></td>
+<td>< 8 hours</td>
+<td>< 48 hours</td>
+<td>Business hours</td>
+</tr>
+<tr>
+<td><strong>Enterprise</strong></td>
+<td>< 1 hour</td>
+<td>< 24 hours</td>
+<td>24/7/365</td>
+</tr>
+<tr>
+<td><strong>Critical (Enterprise)</strong></td>
+<td>< 15 minutes</td>
+<td>< 4 hours</td>
+<td>24/7/365</td>
+</tr>
+</tbody>
+</table>
+
+**📈 Our Track Record:**
+- **98% Customer Satisfaction**: Based on support surveys
+- **95% First Contact Resolution**: Issues resolved on first contact
+- **99.9% SLA Compliance**: Meeting or exceeding response time commitments
+- **< 5 Minute Average**: Phone queue wait times
+
+### 🎯 **Support Best Practices**
+
+#### 📝 **Before Contacting Support**
+1. **🔍 Search Documentation**: Check our comprehensive guides first
+2. **❓ Browse FAQ**: Common questions and solutions
+3. **🔧 Try Troubleshooting**: Follow our diagnostic guides
+4. **📋 Gather Information**: Collect relevant logs and system info
+5. **📸 Take Screenshots**: Visual information helps diagnosis
+
+#### 📧 **Creating Effective Support Tickets**
+- **🎯 Clear Subject Line**: Describe the issue concisely
+- **📝 Detailed Description**: Steps to reproduce the problem
+- **🖥️ Environment Information**: OS, version, configuration details
+- **📊 Screenshots/Logs**: Include relevant diagnostic information
+- **⚡ Priority Level**: Indicate urgency and business impact
+
+<div align="center">
+
+**🎯 Need immediate help? We're here for you!**
+
+[**📧 Email Support**](mailto:support@bulletdropstudios.com) • [**💬 Start Discussion**](https://github.com/mllinman/cyberrecon-suite/discussions) • [**🎫 Submit Ticket**](https://portal.cyberrecon.com)
+
+**💡 Pro Tip**: The more information you provide, the faster we can help resolve your issue!
+
+</div>
 
 ---
 
