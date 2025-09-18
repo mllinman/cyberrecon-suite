@@ -1,7 +1,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
-import { Download, Shield, Users, Activity, Settings, CreditCard } from 'lucide-react'
+import { Download, Shield, Users, Activity, Settings, CreditCard, Eye, Network } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const Dashboard = () => {
   const { user } = useAuth()
@@ -108,6 +109,56 @@ const Dashboard = () => {
                   <p className="text-gray-400 text-sm">Next Billing</p>
                   <p className="text-lg font-semibold text-white">Feb 15, 2024</p>
                 </div>
+              </div>
+            </motion.div>
+
+            {/* Real-Time Dashboards */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="card"
+            >
+              <h2 className="text-xl font-semibold text-white mb-6">🔴 Live Security Dashboards</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Link 
+                  to="/threat-intelligence"
+                  className="flex items-center justify-between p-4 bg-dark-700/50 rounded-lg hover:bg-primary-500/10 transition-colors group"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
+                      <Eye className="h-6 w-6 text-red-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white group-hover:text-primary-400 transition-colors">Threat Intelligence</h3>
+                      <p className="text-sm text-gray-400">Real-time threat feeds & analysis</p>
+                      <p className="text-xs text-green-400">🔴 Live Feed Active</p>
+                    </div>
+                  </div>
+                  <div className="text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    →
+                  </div>
+                </Link>
+
+                <Link 
+                  to="/network-monitoring"
+                  className="flex items-center justify-between p-4 bg-dark-700/50 rounded-lg hover:bg-primary-500/10 transition-colors group"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                      <Network className="h-6 w-6 text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white group-hover:text-primary-400 transition-colors">Network Monitoring</h3>
+                      <p className="text-sm text-gray-400">Live network traffic analysis</p>
+                      <p className="text-xs text-green-400">🔴 Monitoring Active</p>
+                    </div>
+                  </div>
+                  <div className="text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    →
+                  </div>
+                </Link>
               </div>
             </motion.div>
 

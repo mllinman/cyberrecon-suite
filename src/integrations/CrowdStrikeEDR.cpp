@@ -8,6 +8,8 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QMessageBox>
+#include <QThread>
+#include <QRandomGenerator>
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QTextStream>
