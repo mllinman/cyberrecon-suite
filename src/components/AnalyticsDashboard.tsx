@@ -75,9 +75,19 @@ export default function AnalyticsDashboard() {
 
   const handleExport = async () => {
     try {
+      // TODO: In production, include authentication token from localStorage
+      const token = localStorage.getItem('token');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch('/api/analytics/export', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ format: 'json', dateRange: timeframe }),
       });
       const data = await response.json();

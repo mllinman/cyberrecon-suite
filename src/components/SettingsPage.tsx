@@ -261,11 +261,16 @@ export default function SettingsPage() {
     }
   };
 
-  const handleCopyKey = (keyId: number, key: string) => {
-    navigator.clipboard.writeText(key);
-    setCopiedKey(keyId);
-    toast.success('API key copied to clipboard');
-    setTimeout(() => setCopiedKey(null), 2000);
+  const handleCopyKey = async (keyId: number, key: string) => {
+    try {
+      await navigator.clipboard.writeText(key);
+      setCopiedKey(keyId);
+      toast.success('API key copied to clipboard');
+      setTimeout(() => setCopiedKey(null), 2000);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+      toast.error('Failed to copy API key. Please copy manually.');
+    }
   };
 
   if (loading) {
