@@ -62,6 +62,7 @@ export default function SettingsPage() {
   const [copiedKey, setCopiedKey] = useState<number | null>(null);
   const [newKeyName, setNewKeyName] = useState('');
   const [showNewKeyDialog, setShowNewKeyDialog] = useState(false);
+  const [confirmRevokeKeyId, setConfirmRevokeKeyId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchSettings();
@@ -218,10 +219,6 @@ export default function SettingsPage() {
   };
 
   const handleRevokeApiKey = async (id: number) => {
-    if (!confirm('Are you sure you want to revoke this API key? This action cannot be undone.')) {
-      return;
-    }
-
     try {
       const response = await fetch(`/api/settings/api-keys/${id}`, {
         method: 'DELETE',
@@ -230,6 +227,7 @@ export default function SettingsPage() {
       if (response.ok) {
         toast.success('API key revoked successfully');
         setApiKeys(apiKeys.filter(key => key.id !== id));
+        setConfirmRevokeKeyId(null);
       } else {
         toast.error('Failed to revoke API key');
       }
@@ -336,6 +334,8 @@ export default function SettingsPage() {
               setNewKeyName={setNewKeyName}
               showDialog={showNewKeyDialog}
               setShowDialog={setShowNewKeyDialog}
+              confirmRevokeKeyId={confirmRevokeKeyId}
+              setConfirmRevokeKeyId={setConfirmRevokeKeyId}
             />
           )}
         </div>
@@ -672,7 +672,7 @@ function DashboardSettings({ settings, setSettings, onSave, saving }: {
   );
 }
 
-function ApiKeySettings({ apiKeys, onGenerate, onRevoke, onCopy, copiedKey, newKeyName, setNewKeyName, showDialog, setShowDialog }: {
+function ApiKeySettings({ apiKeys, onGenerate, onRevoke, onCopy, copiedKey, newKeyName, setNewKeyName, showDialog, setShowDialog, confirmRevokeKeyId, setConfirmRevokeKeyId }: {
   apiKeys: ApiKey[];
   onGenerate: () => void;
   onRevoke: (id: number) => void;
@@ -682,6 +682,8 @@ function ApiKeySettings({ apiKeys, onGenerate, onRevoke, onCopy, copiedKey, newK
   setNewKeyName: (name: string) => void;
   showDialog: boolean;
   setShowDialog: (show: boolean) => void;
+  confirmRevokeKeyId: number | null;
+  setConfirmRevokeKeyId: (id: number | null) => void;
 }) {
   return (
     <div className="space-y-6">
@@ -767,13 +769,30 @@ function ApiKeySettings({ apiKeys, onGenerate, onRevoke, onCopy, copiedKey, newK
               <p className="text-sm text-slate-400">
                 Last used: {key.lastUsed ? new Date(key.lastUsed).toLocaleString() : 'Never'}
               </p>
-              <button
-                onClick={() => onRevoke(key.id)}
-                className="flex items-center gap-2 px-3 py-1 text-sm text-red-400 hover:text-red-300"
-              >
-                <Trash2 className="w-4 h-4" />
-                Revoke
-              </button>
+              {confirmRevokeKeyId === key.id ? (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => onRevoke(key.id)}
+                    className="flex items-center gap-2 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Confirm Revoke
+                  </button>
+                  <button
+                    onClick={() => setConfirmRevokeKeyId(null)}
+                    className="flex items-center gap-2 px-3 py-1 text-sm bg-slate-700 text-white rounded hover:bg-slate-600"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmRevokeKeyId(key.id)}
+                  className="flex items-center gap-2 px-3 py-1 text-sm text-red-400 hover:text-red-300"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Revoke
+                </button>
+              )}
             </div>
           </div>
         ))}

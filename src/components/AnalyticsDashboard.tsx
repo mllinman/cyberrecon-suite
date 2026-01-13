@@ -8,6 +8,7 @@ import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import toast from 'react-hot-toast';
 
 interface AnalyticsData {
   summary: {
@@ -74,9 +75,15 @@ export default function AnalyticsDashboard() {
         body: JSON.stringify({ format: 'json', dateRange: timeframe }),
       });
       const data = await response.json();
-      alert('Report generated successfully!');
+      
+      if (response.ok) {
+        toast.success('Report generated successfully!');
+      } else {
+        toast.error('Failed to generate report');
+      }
     } catch (error) {
       console.error('Failed to export analytics:', error);
+      toast.error('Failed to export analytics');
     }
   };
 
