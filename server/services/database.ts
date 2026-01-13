@@ -37,8 +37,6 @@ pool = createPool();
 
 export async function initializeDatabase() {
   // Validate DATABASE_URL when database initialization is attempted
-  const databaseUrl = process.env.DATABASE_URL;
-  
   if (!databaseUrl || databaseUrl.trim() === '') {
     const errorMessage = 'DATABASE_URL environment variable is not set or is empty!';
     console.error(`❌ ${errorMessage}`);
@@ -62,7 +60,7 @@ export async function initializeDatabase() {
     // Recreate pool if it wasn't created during module load
     pool = createPool();
     if (!pool) {
-      throw new Error('Failed to create database pool. DATABASE_URL may be invalid.');
+      throw new Error('Failed to create database pool despite having DATABASE_URL. The connection string may be invalid.');
     }
   }
 
