@@ -68,7 +68,7 @@ router.post('/search', async (req: Request, res: Response) => {
 
     res.json({
       results: result.rows,
-      found: result.rowCount > 0,
+      found: (result.rowCount || 0) > 0,
     });
   } catch (error) {
     console.error('Search IOC error:', error);
@@ -113,7 +113,7 @@ router.get('/recent', async (req: Request, res: Response) => {
 
     res.json({
       threats: result.rows,
-      count: result.rowCount,
+      count: result.rowCount || 0,
       timeframe: `${hours} hours`,
     });
   } catch (error) {
