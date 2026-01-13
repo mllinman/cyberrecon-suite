@@ -12,13 +12,22 @@ const databaseUrl = process.env.DATABASE_URL ||
   process.env.SUPABASE_URL ||
   process.env.NEON_URL;
 
+// Mock Data Store
+const mockStore = {
+  users: [] as any[],
+  securityEvents: [] as any[],
+  threatIndicators: [] as any[],
+  networkScans: [] as any[]
+};
+
 // Create pool only if DATABASE_URL is available
 export let pool: pg.Pool | null = null;
+const useMock = !databaseUrl || databaseUrl.trim() === '';
 
 function createPool() {
-  if (!databaseUrl || databaseUrl.trim() === '') {
-    // Log available environment variables (keys only) to help debugging
-    console.log('Environment variables available:', Object.keys(process.env).join(', '));
+  if (useMock) {
+    console.log('⚠️  No DATABASE_URL found. Running in IN-MEMORY MOCK MODE.');
+    console.log('    Data will not be persisted across restarts.');
     return null;
   }
 
@@ -42,6 +51,12 @@ function createPool() {
 pool = createPool();
 
 export async function initializeDatabase() {
+  if (useMock) {
+    console.log('🚧 Initializing Mock Database...');
+    console.log('✓ Mock Database ready');
+    return;
+  }
+
   // Validate DATABASE_URL when database initialization is attempted
   if (!databaseUrl || databaseUrl.trim() === '') {
     const errorMessage = 'DATABASE_URL environment variable is not set or is empty!';
@@ -66,7 +81,8 @@ export async function initializeDatabase() {
     // Recreate pool if it wasn't created during module load
     pool = createPool();
     if (!pool) {
-      throw new Error('Failed to create database pool despite having DATABASE_URL. The connection string may be invalid.');
+      // Should effectively be unreachable given useMock check above
+      throw new Error('Database configuration error');
     }
   }
 
@@ -170,20 +186,76 @@ export async function initializeDatabase() {
     console.log('Database schema initialized successfully');
   } catch (error) {
     console.error('Database initialization error:', error);
-    throw error;
+    // Don't kill the server if DB init fails, just warn
+    console.warn('⚠️  Database initialization failed. App may not function correctly.');
   }
 }
 
 export async function query(text: string, params?: any[]) {
+  if (useMock) {
+    const lowerText = text.toLowerCase();
+
+    // Auth: Register User
+    if (lowerText.includes('insert into users')) {
+      const email = params ? params[0] : 'user@example.com';
+      const passwordHash = params ? params[1] : '';
+      const fullName = params ? params[2] : 'Demo User';
+      const newUser = {
+        id: mockStore.users.length + 1,
+        email,
+        password_hash: passwordHash,
+        full_name: fullName,
+        role: 'user',
+        subscription_tier: 'free',
+        created_at: new Date(),
+        updated_at: new Date(),
+        last_login: null
+      };
+      mockStore.users.push(newUser);
+      return { rows: [newUser], rowCount: 1 };
+    }
+
+    // Auth: Find by Email or ID
+    if (lowerText.includes('select') && lowerText.includes('from users')) {
+      if (lowerText.includes('where email = $1')) {
+        const email = params ? params[0] : '';
+        const user = mockStore.users.find(u => u.email === email);
+        return { rows: user ? [user] : [], rowCount: user ? 1 : 0 };
+      }
+      if (lowerText.includes('where id = $1')) {
+        const id = params ? params[0] : 0;
+        const user = mockStore.users.find(u => u.id === id);
+        return { rows: user ? [user] : [], rowCount: user ? 1 : 0 };
+      }
+      return { rows: mockStore.users, rowCount: mockStore.users.length };
+    }
+
+    // Auth: Update Login
+    if (lowerText.includes('update users')) {
+      // Just mock success
+      return { rows: [], rowCount: 1 };
+    }
+
+    // Health Check / Basic Connection
+    if (lowerText.includes('select now()')) {
+      return { rows: [{ current_time: new Date() }], rowCount: 1 };
+    }
+
+    // Default empty response for other queries
+    return { rows: [], rowCount: 0 };
+  }
+
   if (!pool) {
-    throw new Error('Database pool is not initialized. DATABASE_URL is required.');
+    throw new Error('Database pool is not initialized.');
   }
 
   const start = Date.now();
   try {
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
-    console.log('Executed query', { text, duration, rows: res.rowCount });
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Executed query', { text, duration, rows: res.rowCount });
+    }
     return res;
   } catch (error) {
     console.error('Query error:', error);
