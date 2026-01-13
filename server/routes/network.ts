@@ -24,16 +24,42 @@ router.post('/scan', async (req: Request, res: Response) => {
 
     const scan = result.rows[0];
 
-    // Simulate scan (in production, this would trigger actual scanning)
-    setTimeout(async () => {
-      const mockResults = generateMockScanResults(scanType, target);
-      await query(
-        `UPDATE network_scans 
-         SET status = 'completed', results = $1, completed_at = CURRENT_TIMESTAMP
-         WHERE id = $2`,
-        [JSON.stringify(mockResults), scan.id]
-      );
-    }, 5000);
+    // triggers active scanning asynchronously
+    (async () => {
+      try {
+        let results;
+        if (scanType === 'port_scan' || scanType === 'full_scan') {
+          const defaultPorts = '21,22,23,25,53,80,110,135,139,143,443,445,3306,3389,5432,8080';
+          const portList = parsePorts(defaultPorts);
+          const openPorts: any[] = [];
+
+          // Scan with concurrency limit (same as /port-scan)
+          const batchSize = 10;
+          for (let i = 0; i < portList.length; i += batchSize) {
+            const batch = portList.slice(i, i + batchSize);
+            const batchResults = await Promise.all(batch.map(port => checkPort(target, port)));
+            openPorts.push(...batchResults.filter(r => r !== null));
+          }
+          results = { openPorts, scannedPorts: portList.length };
+        } else {
+          // Placeholder for other scan types (e.g. ping)
+          results = { message: 'Scan type simulation completed' };
+        }
+
+        await query(
+          `UPDATE network_scans 
+           SET status = 'completed', results = $1, completed_at = CURRENT_TIMESTAMP
+           WHERE id = $2`,
+          [JSON.stringify(results), scan.id]
+        );
+      } catch (err) {
+        console.error('Async scan failed:', err);
+        await query(
+          `UPDATE network_scans SET status = 'failed' WHERE id = $1`,
+          [scan.id]
+        );
+      }
+    })();
 
     res.status(201).json({
       scanId: scan.id,

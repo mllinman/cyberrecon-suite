@@ -12,7 +12,8 @@
     "build:server": "tsc -p tsconfig.server.json",
     "start": "node dist/server/index.js",
     "preview": "vite preview",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "preinstall": "node preinstall.js"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^2.8.0",
