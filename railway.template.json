@@ -1,0 +1,28 @@
+{
+  "name": "CyberRecon Suite",
+  "description": "Enterprise-Grade Cybersecurity Operations Platform with SIEM, Threat Intelligence, EDR, and Compliance Management",
+  "repository": "https://github.com/mllinman/cyberrecon-suite",
+  "plugins": [
+    {
+      "plan": "postgresql"
+    }
+  ],
+  "env": {
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production"
+    },
+    "JWT_SECRET": {
+      "description": "Secret key for JWT token generation (MUST be changed to a secure random string)",
+      "generator": "secret"
+    }
+  },
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "npm run build"
+  },
+  "deploy": {
+    "startCommand": "npm start",
+    "healthcheckPath": "/health"
+  }
+}

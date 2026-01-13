@@ -4,7 +4,6 @@
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg?style=for-the-badge)](https://github.com/mllinman/cyberrecon-suite)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![Railway](https://img.shields.io/badge/Deploy-Railway-blueviolet.svg?style=for-the-badge&logo=railway)](https://railway.app)
 [![Node](https://img.shields.io/badge/Node-18+-brightgreen.svg?style=for-the-badge&logo=node.js)]()
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg?style=for-the-badge&logo=typescript)]()
 
@@ -14,7 +13,9 @@
 
 *The most advanced, fully functional cybersecurity platform - now cloud-native*
 
-[🚀 **Deploy to Railway**](#-deployment) • [📖 **Documentation**](#-features) • [⚡ **Quick Start**](#-quick-start) • [🔐 **Security**](#-security)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/cyberrecon)
+
+[⚡ **Quick Start**](#-quick-start) • [📖 **Features**](#-features) • [📚 **Documentation**](DEPLOYMENT.md) • [🔐 **Security**](#-security)
 
 </div>
 
