@@ -58,10 +58,16 @@ export default function AnalyticsDashboard() {
     try {
       setLoading(true);
       const response = await fetch('/api/analytics/dashboard');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch analytics data');
+      }
+      
       const data = await response.json();
       setAnalyticsData(data);
     } catch (error) {
       console.error('Failed to fetch analytics:', error);
+      toast.error('Failed to load analytics data');
     } finally {
       setLoading(false);
     }

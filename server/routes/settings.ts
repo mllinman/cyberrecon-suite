@@ -1,13 +1,15 @@
 import express, { Router, Request, Response } from 'express';
 import { query } from '../services/database.js';
+import crypto from 'crypto';
 
 const router: Router = express.Router();
 
 // Get user settings
 router.get('/profile', async (req: Request, res: Response) => {
   try {
-    // In a real implementation, get userId from JWT token
-    const userId = req.headers['x-user-id'] || 1;
+    // TODO: In production, extract userId from authenticated JWT token
+    // For now, using a constant since this is demonstration code
+    const userId = 1;
 
     // Mock user settings
     const settings = {
@@ -189,10 +191,14 @@ router.post('/api-keys', async (req: Request, res: Response) => {
   try {
     const { name } = req.body;
 
+    // Generate cryptographically secure API key
+    const randomBytes = crypto.randomBytes(32);
+    const apiKey = `cr_${randomBytes.toString('hex')}`;
+
     const newKey = {
       id: Date.now(),
       name,
-      key: `cr_${Math.random().toString(36).substr(2, 32)}`,
+      key: apiKey,
       created: new Date().toISOString(),
       lastUsed: null,
       status: 'active',

@@ -6,6 +6,8 @@ const router: Router = express.Router();
 // Get analytics dashboard data
 router.get('/dashboard', async (req: Request, res: Response) => {
   try {
+    // TODO: In production, aggregate data from actual security events in the database
+    // This mock data is for demonstration purposes only
     const dashboardData = {
       summary: {
         totalEvents: 45678,

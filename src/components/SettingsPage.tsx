@@ -190,8 +190,32 @@ export default function SettingsPage() {
   };
 
   const handleGenerateApiKey = async () => {
-    if (!newKeyName.trim()) {
+    const trimmedName = newKeyName.trim();
+    
+    // Validate API key name
+    if (!trimmedName) {
       toast.error('Please enter a name for the API key');
+      return;
+    }
+    
+    if (trimmedName.length < 3) {
+      toast.error('API key name must be at least 3 characters long');
+      return;
+    }
+    
+    if (trimmedName.length > 50) {
+      toast.error('API key name must be less than 50 characters');
+      return;
+    }
+    
+    if (!/^[a-zA-Z0-9\s\-_]+$/.test(trimmedName)) {
+      toast.error('API key name can only contain letters, numbers, spaces, hyphens, and underscores');
+      return;
+    }
+    
+    // Check for duplicate names
+    if (apiKeys.some(key => key.name.toLowerCase() === trimmedName.toLowerCase())) {
+      toast.error('An API key with this name already exists');
       return;
     }
 
@@ -199,7 +223,7 @@ export default function SettingsPage() {
       const response = await fetch('/api/settings/api-keys', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newKeyName }),
+        body: JSON.stringify({ name: trimmedName }),
       });
       
       const data = await response.json();
