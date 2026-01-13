@@ -14,7 +14,20 @@ const databaseUrl = process.env.DATABASE_URL ||
 
 // Mock Data Store
 const mockStore = {
-  users: [] as any[],
+  users: [
+    {
+      id: 1,
+      email: 'admin@cyberrecon.com',
+      // Password: admin123
+      password_hash: '$2b$10$ypCvfbE6Z.lYRbtyizw7v.gbvYrBTIxGdbA6S3Bhv1Jtt.470XkzS',
+      full_name: 'Admin User',
+      role: 'admin',
+      subscription_tier: 'enterprise',
+      created_at: new Date(),
+      updated_at: new Date(),
+      last_login: null
+    }
+  ] as any[],
   securityEvents: [] as any[],
   threatIndicators: [] as any[],
   networkScans: [] as any[]
