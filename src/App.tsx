@@ -10,6 +10,8 @@ import ThreatIntelligenceDashboard from './components/ThreatIntelligenceDashboar
 import NetworkMonitoringDashboard from './components/NetworkMonitoringDashboard';
 import EDRDashboard from './components/EDRDashboard';
 import ComplianceDashboard from './components/ComplianceDashboard';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
+import SettingsPage from './components/SettingsPage';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -252,27 +254,6 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-// EDR and Compliance components are now imported
-
-
-function AnalyticsDashboard() {
-  return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-cyan-400 mb-4">Analytics Dashboard</h1>
-      <p className="text-slate-400">Advanced analytics coming soon...</p>
-    </div>
-  );
-}
-
-function SettingsPage() {
-  return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-cyan-400 mb-4">Settings</h1>
-      <p className="text-slate-400">Settings page coming soon...</p>
     </div>
   );
 }

@@ -284,4 +284,3 @@ export default function ThreatIntelligenceDashboard() {
     </div>
   )
 }
-export default ThreatIntelligenceDashboard
