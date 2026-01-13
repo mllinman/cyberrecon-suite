@@ -5,16 +5,49 @@ dotenv.config();
 
 const { Pool } = pg;
 
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+// Validate DATABASE_URL is properly set
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl || databaseUrl.trim() === '') {
+  const errorMessage = 'DATABASE_URL environment variable is not set or is empty!';
+  console.error(`❌ ${errorMessage}`);
+  console.error('   Please set DATABASE_URL to connect to your PostgreSQL database.');
+  console.error('   Example: postgresql://user:password@host:port/database');
+  
+  // In production (Railway), this is a critical error
+  if (process.env.NODE_ENV === 'production') {
+    console.error('   For Railway deployment:');
+    console.error('   1. Add PostgreSQL plugin to your Railway project');
+    console.error('   2. Link DATABASE_URL variable to your service');
+    console.error('   3. Redeploy the application');
+    throw new Error('DATABASE_URL is required in production');
+  } else {
+    console.warn('⚠️  Running without DATABASE_URL - database features will be unavailable');
+  }
+}
+
+console.log(`🔌 Connecting to database: ${databaseUrl ? databaseUrl.split('@')[1] || 'configured' : 'not configured'}`);
+
+export const pool = databaseUrl ? new Pool({
+  connectionString: databaseUrl,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+  connectionTimeoutMillis: 10000, // Increased timeout for Railway
+}) : null;
 
 export async function initializeDatabase() {
+  if (!pool) {
+    throw new Error('Database pool is not initialized. DATABASE_URL is required.');
+  }
+
   try {
+    // Test database connection first
+    console.log('Testing database connection...');
+    const result = await pool.query('SELECT NOW() as current_time');
+    console.log(`✓ Database connection successful at ${result.rows[0].current_time}`);
+
+
     // Create tables
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -114,6 +147,10 @@ export async function initializeDatabase() {
 }
 
 export async function query(text: string, params?: any[]) {
+  if (!pool) {
+    throw new Error('Database pool is not initialized. DATABASE_URL is required.');
+  }
+  
   const start = Date.now();
   try {
     const res = await pool.query(text, params);
