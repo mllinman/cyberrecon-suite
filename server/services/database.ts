@@ -5,14 +5,20 @@ dotenv.config();
 
 const { Pool } = pg;
 
-// Get DATABASE_URL but don't fail at import time
-const databaseUrl = process.env.DATABASE_URL;
+// Get DATABASE_URL or common alternatives
+const databaseUrl = process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.POSTGRESQL_URL ||
+  process.env.SUPABASE_URL ||
+  process.env.NEON_URL;
 
 // Create pool only if DATABASE_URL is available
 export let pool: pg.Pool | null = null;
 
 function createPool() {
   if (!databaseUrl || databaseUrl.trim() === '') {
+    // Log available environment variables (keys only) to help debugging
+    console.log('Environment variables available:', Object.keys(process.env).join(', '));
     return null;
   }
 
@@ -42,7 +48,7 @@ export async function initializeDatabase() {
     console.error(`❌ ${errorMessage}`);
     console.error('   Please set DATABASE_URL to connect to your PostgreSQL database.');
     console.error('   Example: postgresql://user:password@host:port/database');
-    
+
     // In production (Railway), this is a critical error
     if (process.env.NODE_ENV === 'production') {
       console.error('   For Railway deployment:');
@@ -172,7 +178,7 @@ export async function query(text: string, params?: any[]) {
   if (!pool) {
     throw new Error('Database pool is not initialized. DATABASE_URL is required.');
   }
-  
+
   const start = Date.now();
   try {
     const res = await pool.query(text, params);
