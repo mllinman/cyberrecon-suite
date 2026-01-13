@@ -1,316 +1,287 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Shield, AlertTriangle, Globe, Activity, TrendingUp, Eye } from 'lucide-react'
+import { Shield, AlertTriangle, Globe, Activity, TrendingUp, Eye, Plus, Search } from 'lucide-react'
+import { Toaster, toast } from 'react-hot-toast'
 
-interface ThreatData {
-  id: string
-  severity: 'critical' | 'high' | 'medium' | 'low'
-  type: string
+interface ThreatIndicator {
+  id: number
+  ioc_type: string
+  ioc_value: string
+  threat_level: 'critical' | 'high' | 'medium' | 'low'
   source: string
   description: string
-  timestamp: Date
-  confidence: number
-  ioCs: string[]
+  last_seen: string
+  active: boolean
 }
 
 interface ThreatStats {
-  totalThreats: number
-  criticalThreats: number
-  blockedAttacks: number
-  activeInvestigations: number
+  total_indicators: number
+  critical_threats: number
+  active_indicators: number
+  high_threats: number
 }
 
-const ThreatIntelligenceDashboard: React.FC = () => {
-  const [threats, setThreats] = useState<ThreatData[]>([])
-  const [stats, setStats] = useState<ThreatStats>({
-    totalThreats: 0,
-    criticalThreats: 0,
-    blockedAttacks: 0,
-    activeInvestigations: 0
-  })
+export default function ThreatIntelligenceDashboard() {
+  const [threats, setThreats] = useState<ThreatIndicator[]>([])
+  const [stats, setStats] = useState<ThreatStats | null>(null)
   const [isLive, setIsLive] = useState(true)
+  const [showAddForm, setShowAddForm] = useState(false)
 
-  // Real-time threat intelligence simulation
+  // Form State
+  const [newIOC, setNewIOC] = useState({
+    iocType: 'ip',
+    iocValue: '',
+    threatLevel: 'medium',
+    source: 'Manual Entry',
+    description: '',
+    tags: []
+  })
+
+  const fetchData = async () => {
+    try {
+      const [statsRes, threatsRes] = await Promise.all([
+        fetch('/api/threat-intel/stats'),
+        fetch('/api/threat-intel/recent?limit=20')
+      ])
+
+      const statsData = await statsRes.json()
+      const threatsData = await threatsRes.json()
+
+      setStats(statsData)
+      if (threatsData.threats) {
+        setThreats(threatsData.threats)
+      }
+    } catch (err) {
+      console.error('Failed to fetch threat intel', err)
+    }
+  }
+
   useEffect(() => {
-    const generateThreatData = (): ThreatData => {
-      const threatTypes = [
-        'Malware Campaign',
-        'Phishing Attack',
-        'Command & Control',
-        'Data Exfiltration',
-        'APT Activity',
-        'Botnet Traffic',
-        'Cryptojacking',
-        'Ransomware Indicators'
-      ]
-      
-      const sources = [
-        'VirusTotal',
-        'AlienVault OTX',
-        'Abuse.ch',
-        'Internal Honeypot',
-        'Network Sensors',
-        'Email Gateway',
-        'DNS Monitoring',
-        'Endpoint Detection'
-      ]
+    fetchData()
+    if (!isLive) return
 
-      const severities: Array<'critical' | 'high' | 'medium' | 'low'> = ['critical', 'high', 'medium', 'low']
-      const severity = severities[Math.floor(Math.random() * severities.length)]
-      
-      return {
-        id: `threat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        severity,
-        type: threatTypes[Math.floor(Math.random() * threatTypes.length)],
-        source: sources[Math.floor(Math.random() * sources.length)],
-        description: generateThreatDescription(severity),
-        timestamp: new Date(),
-        confidence: Math.floor(Math.random() * 30) + 70, // 70-100% confidence
-        ioCs: generateIoCs()
-      }
-    }
-
-    const generateThreatDescription = (severity: string): string => {
-      const descriptions = {
-        critical: [
-          'Active exploitation detected targeting critical infrastructure',
-          'Zero-day vulnerability being actively exploited',
-          'Advanced persistent threat (APT) command and control identified',
-          'Critical ransomware payload detected in network traffic'
-        ],
-        high: [
-          'Suspicious network activity matching known attack patterns',
-          'Malicious domain resolution attempts blocked',
-          'Phishing campaign targeting organization email addresses',
-          'Unusual data transfer patterns detected'
-        ],
-        medium: [
-          'Potential security policy violation detected',
-          'Suspicious user behavior pattern identified',
-          'Minor configuration drift from security baseline',
-          'Elevated privilege usage outside normal hours'
-        ],
-        low: [
-          'Information gathering activity detected',
-          'Minor network anomaly within acceptable thresholds',
-          'Routine security scan activity observed',
-          'Low-confidence indicator observed in logs'
-        ]
-      }
-      
-      const severityDescs = descriptions[severity as keyof typeof descriptions] || descriptions.medium
-      return severityDescs[Math.floor(Math.random() * severityDescs.length)]
-    }
-
-    const generateIoCs = (): string[] => {
-      const iocTypes = [
-        '192.168.1.100',
-        'malicious-domain.com',
-        'SHA256:a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
-        'evil-actor@suspicious.net',
-        '/tmp/malware.sh',
-        'HKEY_LOCAL_MACHINE\\SOFTWARE\\Malware\\Config'
-      ]
-      
-      const count = Math.floor(Math.random() * 3) + 1
-      return iocTypes.sort(() => 0.5 - Math.random()).slice(0, count)
-    }
-
-    // Update stats
-    const updateStats = () => {
-      setStats(prevStats => ({
-        totalThreats: prevStats.totalThreats + Math.floor(Math.random() * 5) + 1,
-        criticalThreats: prevStats.criticalThreats + Math.floor(Math.random() * 2),
-        blockedAttacks: prevStats.blockedAttacks + Math.floor(Math.random() * 10) + 5,
-        activeInvestigations: Math.floor(Math.random() * 15) + 5
-      }))
-    }
-
-    // Add new threats periodically
-    const addThreat = () => {
-      if (isLive) {
-        const newThreat = generateThreatData()
-        setThreats(prevThreats => [newThreat, ...prevThreats.slice(0, 19)]) // Keep only latest 20
-        updateStats()
-      }
-    }
-
-    // Initial data
-    const initialThreats = Array.from({ length: 10 }, generateThreatData)
-    setThreats(initialThreats)
-    updateStats()
-
-    // Set up real-time updates
-    const interval = setInterval(addThreat, 3000 + Math.random() * 4000) // 3-7 seconds
-
+    const interval = setInterval(fetchData, 5000)
     return () => clearInterval(interval)
   }, [isLive])
 
+  const handleSubmitIOC = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const res = await fetch('/api/threat-intel/indicators', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newIOC)
+      })
+
+      if (res.ok) {
+        toast.success('IOC added successfully')
+        setShowAddForm(false)
+        fetchData()
+        setNewIOC({ ...newIOC, iocValue: '', description: '' })
+      } else {
+        toast.error('Failed to add IOC')
+      }
+    } catch (err) {
+      toast.error('Error submitting IOC')
+    }
+  }
+
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'text-red-400 bg-red-500/20'
-      case 'high': return 'text-orange-400 bg-orange-500/20'
-      case 'medium': return 'text-yellow-400 bg-yellow-500/20'
-      case 'low': return 'text-blue-400 bg-blue-500/20'
-      default: return 'text-gray-400 bg-gray-500/20'
+      case 'critical': return 'text-red-400 bg-red-500/10 border-red-500/20'
+      case 'high': return 'text-orange-400 bg-orange-500/10 border-orange-500/20'
+      case 'medium': return 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20'
+      case 'low': return 'text-blue-400 bg-blue-500/10 border-blue-500/20'
+      default: return 'text-gray-400 bg-gray-500/10 border-gray-500/20'
     }
   }
 
   return (
     <div className="min-h-screen bg-slate-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
+        <Toaster position="top-right" />
+
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-primary-400 mb-2">
-              🛡️ Real-Time Threat Intelligence
+            <h1 className="text-3xl font-bold text-primary-400 mb-2 flex items-center gap-3">
+              <Shield className="w-8 h-8" />
+              Threat Intelligence
             </h1>
-            <p className="text-gray-400">Live security threat monitoring and analysis</p>
+            <p className="text-gray-400">Live security threat monitoring and IOC management</p>
           </div>
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowAddForm(!showAddForm)}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors border border-purple-500"
+            >
+              <Plus className="w-4 h-4" />
+              Add IOC
+            </button>
             <motion.div
-              className={`flex items-center gap-2 px-4 py-2 rounded-full ${
-                isLive ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full ${isLive ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
+                }`}
               animate={{ scale: isLive ? [1, 1.05, 1] : 1 }}
               transition={{ duration: 2, repeat: isLive ? Infinity : 0 }}
             >
               <Activity className="w-4 h-4" />
               {isLive ? 'Live Feed' : 'Paused'}
             </motion.div>
-            <button
-              onClick={() => setIsLive(!isLive)}
-              className="px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
-            >
-              {isLive ? 'Pause' : 'Resume'}
-            </button>
           </div>
         </div>
+
+        {/* Add IOC Form */}
+        {showAddForm && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="mb-8 bg-slate-900/50 border border-purple-500/30 rounded-lg p-6"
+          >
+            <h3 className="text-lg font-bold text-white mb-4">Submit New Indicator of Compromise</h3>
+            <form onSubmit={handleSubmitIOC} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">IOC Value</label>
+                <input
+                  required
+                  className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-white"
+                  placeholder="e.g. 1.2.3.4 or malicious.com"
+                  value={newIOC.iocValue}
+                  onChange={e => setNewIOC({ ...newIOC, iocValue: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Type</label>
+                <select
+                  className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-white"
+                  value={newIOC.iocType}
+                  onChange={e => setNewIOC({ ...newIOC, iocType: e.target.value })}
+                >
+                  <option value="ip">IP Address</option>
+                  <option value="domain">Domain</option>
+                  <option value="hash">File Hash</option>
+                  <option value="email">Email</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Threat Level</label>
+                <select
+                  className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-white"
+                  value={newIOC.threatLevel}
+                  onChange={e => setNewIOC({ ...newIOC, threatLevel: e.target.value })}
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Description</label>
+                <input
+                  className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-white"
+                  placeholder="Context about this threat..."
+                  value={newIOC.description}
+                  onChange={e => setNewIOC({ ...newIOC, description: e.target.value })}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded">Submit Indicator</button>
+              </div>
+            </form>
+          </motion.div>
+        )}
 
         {/* Stats Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass-card p-6"
-          >
+          <div className="bg-slate-900/50 border border-cyan-500/20 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Total Threats</p>
-                <p className="text-2xl font-bold text-white">{stats.totalThreats.toLocaleString()}</p>
+                <p className="text-gray-400 text-sm">Total Indicators</p>
+                <p className="text-2xl font-bold text-white">{stats?.total_indicators || 0}</p>
               </div>
-              <Shield className="w-8 h-8 text-primary-400" />
+              <Shield className="w-8 h-8 text-cyan-400" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="glass-card p-6"
-          >
+          <div className="bg-slate-900/50 border border-red-500/20 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Critical Threats</p>
-                <p className="text-2xl font-bold text-red-400">{stats.criticalThreats}</p>
+                <p className="text-2xl font-bold text-red-400">{stats?.critical_threats || 0}</p>
               </div>
               <AlertTriangle className="w-8 h-8 text-red-400" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="glass-card p-6"
-          >
+          <div className="bg-slate-900/50 border border-green-500/20 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Blocked Attacks</p>
-                <p className="text-2xl font-bold text-green-400">{stats.blockedAttacks.toLocaleString()}</p>
+                <p className="text-gray-400 text-sm">Active</p>
+                <p className="text-2xl font-bold text-green-400">{stats?.active_indicators || 0}</p>
               </div>
               <Globe className="w-8 h-8 text-green-400" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="glass-card p-6"
-          >
+          <div className="bg-slate-900/50 border border-orange-500/20 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Active Cases</p>
-                <p className="text-2xl font-bold text-yellow-400">{stats.activeInvestigations}</p>
+                <p className="text-gray-400 text-sm">High Risk</p>
+                <p className="text-2xl font-bold text-orange-400">{stats?.high_threats || 0}</p>
               </div>
-              <Eye className="w-8 h-8 text-yellow-400" />
+              <Eye className="w-8 h-8 text-orange-400" />
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Threat Feed */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="glass-card p-6"
-        >
+        <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">Live Threat Intelligence Feed</h2>
-            <TrendingUp className="w-6 h-6 text-primary-400" />
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-cyan-400" />
+              Live Threat Intelligence Feed
+            </h2>
+            <div className="text-sm text-slate-400">Updating live...</div>
           </div>
 
-          <div className="space-y-4 max-h-96 overflow-y-auto">
-            {threats.map((threat, index) => (
+          <div className="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar">
+            {threats.length === 0 && (
+              <div className="text-center py-10 text-slate-500">No active threats detected.</div>
+            )}
+            {threats.map((threat) => (
               <motion.div
                 key={threat.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="border border-slate-700 rounded-lg p-4 hover:border-primary-500/50 transition-colors"
+                className="border border-slate-700/50 bg-slate-800/20 rounded-lg p-4 hover:border-cyan-500/30 transition-colors"
               >
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-3">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getSeverityColor(threat.severity)}`}>
-                      {threat.severity.toUpperCase()}
+                    <span className={`px-2 py-0.5 rounded text-xs font-bold border ${getSeverityColor(threat.threat_level)}`}>
+                      {threat.threat_level?.toUpperCase()}
                     </span>
-                    <span className="text-gray-300 font-medium">{threat.type}</span>
+                    <span className="text-slate-300 font-medium font-mono">{threat.ioc_value}</span>
+                    <span className="text-xs bg-slate-700 px-2 py-0.5 rounded text-slate-400">{threat.ioc_type}</span>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-400">{threat.source}</p>
-                    <p className="text-xs text-gray-500">
-                      {threat.timestamp.toLocaleTimeString()}
+                    <p className="text-xs text-slate-500">
+                      {new Date(threat.last_seen).toLocaleString()}
                     </p>
                   </div>
                 </div>
 
-                <p className="text-gray-300 mb-3">{threat.description}</p>
+                <p className="text-slate-400 text-sm mb-2">{threat.description}</p>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-wrap gap-2">
-                    {threat.ioCs.slice(0, 2).map((ioc, iocIndex) => (
-                      <code key={iocIndex} className="text-xs bg-slate-800 px-2 py-1 rounded text-primary-400">
-                        {ioc.length > 30 ? `${ioc.substring(0, 30)}...` : ioc}
-                      </code>
-                    ))}
-                    {threat.ioCs.length > 2 && (
-                      <span className="text-xs text-gray-500">
-                        +{threat.ioCs.length - 2} more
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    Confidence: {threat.confidence}%
-                  </div>
+                <div className="flex items-center justify-between text-xs text-slate-500">
+                  <span>Source: {threat.source}</span>
+                  {threat.active && <span className="text-green-400 flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-green-500"></div> Active</span>}
                 </div>
               </motion.div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   )
 }
-
 export default ThreatIntelligenceDashboard

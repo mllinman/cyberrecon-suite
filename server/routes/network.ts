@@ -91,23 +91,39 @@ router.get('/scans/user/:userId', async (req: Request, res: Response) => {
   }
 });
 
-// Network monitoring - Get real-time metrics
+import net from 'net';
+import os from 'os';
+
+// ... (existing imports)
+
+// Network monitoring - Get real-time system metrics
 router.get('/metrics', async (req: Request, res: Response) => {
   try {
-    // Simulate real-time network metrics
+    const cpus = os.cpus();
+    const totalMem = os.totalmem();
+    const freeMem = os.freemem();
+    const usedMem = totalMem - freeMem;
+    const cpuUsage = cpus.reduce((acc, cpu) => {
+      const total = Object.values(cpu.times).reduce((a, b) => a + b, 0);
+      const idle = cpu.times.idle;
+      return acc + ((total - idle) / total);
+    }, 0) / cpus.length;
+
+    // Simulate network stats since we can't access low-level driver stats easily in node without libs
+    // But we serve real OS stats for CPU/RAM
     const metrics = {
       timestamp: new Date().toISOString(),
       bandwidth: {
-        upload: Math.random() * 100,
-        download: Math.random() * 100,
+        upload: Math.random() * 50, // Placeholder for real network I/O
+        download: Math.random() * 50,
       },
-      latency: Math.random() * 50,
-      packetLoss: Math.random() * 2,
-      activeConnections: Math.floor(Math.random() * 1000),
-      threats: {
-        detected: Math.floor(Math.random() * 10),
-        blocked: Math.floor(Math.random() * 20),
+      system: {
+        cpuUsage: Math.round(cpuUsage * 100),
+        memoryUsage: Math.round((usedMem / totalMem) * 100),
+        uptime: os.uptime()
       },
+      latency: Math.random() * 20, // Placeholder
+      activeConnections: Math.floor(Math.random() * 500) // Placeholder
     };
 
     res.json(metrics);
@@ -117,13 +133,22 @@ router.get('/metrics', async (req: Request, res: Response) => {
   }
 });
 
-// Port scan
+// Real Port scan
 router.post('/port-scan', async (req: Request, res: Response) => {
   try {
-    const { target, ports = '1-1000' } = req.body;
+    const { target, ports = '21,22,23,25,53,80,110,135,139,143,443,445,3306,3389,5432,8080' } = req.body;
 
-    // Simulate port scanning
-    const openPorts = generateMockPortScan(target, ports);
+    // Parse ports
+    const portList = parsePorts(ports);
+    const openPorts: any[] = [];
+
+    // Scan ports with a concurrency limit
+    const batchSize = 10;
+    for (let i = 0; i < portList.length; i += batchSize) {
+      const batch = portList.slice(i, i + batchSize);
+      const results = await Promise.all(batch.map(port => checkPort(target, port)));
+      openPorts.push(...results.filter(r => r !== null));
+    }
 
     res.json({
       target,
@@ -136,83 +161,61 @@ router.post('/port-scan', async (req: Request, res: Response) => {
   }
 });
 
-// Helper functions
-function generateMockScanResults(scanType: string, target: string) {
-  const baseResults = {
-    scanId: uuidv4(),
-    target,
-    scanType,
-    timestamp: new Date().toISOString(),
-  };
+// Helper: Check a single port
+function checkPort(host: string, port: number): Promise<any> {
+  return new Promise((resolve) => {
+    const socket = new net.Socket();
+    socket.setTimeout(2000); // 2s timeout
 
-  switch (scanType) {
-    case 'vulnerability':
-      return {
-        ...baseResults,
-        vulnerabilities: [
-          {
-            id: 'CVE-2024-0001',
-            severity: 'high',
-            description: 'Sample vulnerability found',
-            affected: target,
-            remediation: 'Update to latest version',
-          },
-        ],
-        summary: {
-          critical: 0,
-          high: 1,
-          medium: 2,
-          low: 5,
-        },
-      };
-    case 'port':
-      return {
-        ...baseResults,
-        openPorts: [
-          { port: 80, service: 'HTTP', version: 'Apache 2.4' },
-          { port: 443, service: 'HTTPS', version: 'nginx 1.18' },
-          { port: 22, service: 'SSH', version: 'OpenSSH 8.2' },
-        ],
-      };
-    default:
-      return {
-        ...baseResults,
-        hosts: [
-          { ip: target, status: 'up', os: 'Linux', openPorts: [22, 80, 443] },
-        ],
-      };
-  }
+    socket.on('connect', () => {
+      socket.destroy();
+      resolve({
+        port,
+        state: 'open',
+        service: getServiceName(port)
+      });
+    });
+
+    socket.on('timeout', () => {
+      socket.destroy();
+      resolve(null);
+    });
+
+    socket.on('error', (err) => {
+      socket.destroy();
+      resolve(null);
+    });
+
+    socket.connect(port, host);
+  });
 }
 
-// Helper function for deterministic port scan simulation
-function generateMockPortScan(target: string, ports: string) {
-  // Use target string to seed deterministic results
-  const seed = target.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const commonPorts = [21, 22, 23, 25, 80, 110, 143, 443, 3306, 5432, 8080];
-  
-  // Deterministically select ports based on target
-  const openPorts = commonPorts.filter((port, index) => (seed + index) % 3 === 0).map(port => ({
-    port,
-    state: 'open',
-    service: getServiceName(port),
-  }));
+// Helper: Parse port string (e.g., "80,443,8000-8010")
+function parsePorts(portStr: string): number[] {
+  const ports: Set<number> = new Set();
+  const parts = portStr.split(',');
 
-  return openPorts;
+  parts.forEach(part => {
+    if (part.includes('-')) {
+      const [start, end] = part.split('-').map(Number);
+      for (let i = start; i <= end; i++) {
+        if (i > 0 && i <= 65535) ports.add(i);
+      }
+    } else {
+      const port = Number(part);
+      if (port > 0 && port <= 65535) ports.add(port);
+    }
+  });
+
+  return Array.from(ports).slice(0, 50); // Limit to 50 ports for safety/speed in this demo
 }
 
 function getServiceName(port: number): string {
   const services: { [key: number]: string } = {
-    21: 'FTP',
-    22: 'SSH',
-    23: 'Telnet',
-    25: 'SMTP',
-    80: 'HTTP',
-    110: 'POP3',
-    143: 'IMAP',
-    443: 'HTTPS',
-    3306: 'MySQL',
-    5432: 'PostgreSQL',
-    8080: 'HTTP-Proxy',
+    21: 'FTP', 22: 'SSH', 23: 'Telnet', 25: 'SMTP', 53: 'DNS',
+    80: 'HTTP', 110: 'POP3', 135: 'RPC', 139: 'NetBIOS', 143: 'IMAP',
+    443: 'HTTPS', 445: 'SMB', 3306: 'MySQL', 3389: 'RDP',
+    5432: 'PostgreSQL', 8080: 'HTTP-Proxy'
   };
   return services[port] || 'Unknown';
 }

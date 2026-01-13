@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { 
-  Shield, Activity, Network, AlertTriangle, FileSearch, 
+import {
+  Shield, Activity, Network, AlertTriangle, FileSearch,
   Settings, LogOut, Menu, X, BarChart3, Users, Lock
 } from 'lucide-react';
 import SIEMDashboardApp from './components/dashboards/SIEMDashboardApp';
 import ThreatIntelligenceDashboard from './components/ThreatIntelligenceDashboard';
 import NetworkMonitoringDashboard from './components/NetworkMonitoringDashboard';
+import EDRDashboard from './components/EDRDashboard';
+import ComplianceDashboard from './components/ComplianceDashboard';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -60,7 +62,7 @@ function App() {
               <Shield className="w-8 h-8 text-cyan-400" />
               <span className="text-xl font-bold text-cyan-400">CyberRecon Suite</span>
             </div>
-            
+
             <div className="hidden md:flex items-center gap-4">
               <span className="text-slate-400">Welcome, {user?.fullName}</span>
               <button
@@ -72,7 +74,7 @@ function App() {
               </button>
             </div>
 
-            <button 
+            <button
               className="md:hidden text-cyan-400"
               onClick={() => setMenuOpen(!menuOpen)}
             >
@@ -110,7 +112,7 @@ function App() {
         </main>
       </div>
 
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
@@ -150,7 +152,7 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
 
     try {
       const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
-      const body = isRegister 
+      const body = isRegister
         ? { email, password, fullName }
         : { email, password };
 
@@ -254,24 +256,8 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
   );
 }
 
-// Placeholder components
-function EDRDashboard() {
-  return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-cyan-400 mb-4">EDR Dashboard</h1>
-      <p className="text-slate-400">Endpoint Detection & Response dashboard coming soon...</p>
-    </div>
-  );
-}
+// EDR and Compliance components are now imported
 
-function ComplianceDashboard() {
-  return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-cyan-400 mb-4">Compliance Dashboard</h1>
-      <p className="text-slate-400">Compliance monitoring dashboard coming soon...</p>
-    </div>
-  );
-}
 
 function AnalyticsDashboard() {
   return (

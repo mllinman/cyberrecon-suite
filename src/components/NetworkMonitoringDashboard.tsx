@@ -1,338 +1,267 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Activity, Wifi, Shield, AlertCircle, Server, Network, Zap } from 'lucide-react'
-
-interface NetworkConnection {
-  id: string
-  sourceIP: string
-  destIP: string
-  port: number
-  protocol: string
-  status: 'active' | 'blocked' | 'monitoring'
-  bytes: number
-  packets: number
-  risk: 'low' | 'medium' | 'high' | 'critical'
-  timestamp: Date
-  country?: string
-  asn?: string
-}
+import { Activity, Wifi, Shield, AlertCircle, Server, Network, Zap, Search, Play, Globe } from 'lucide-react'
+import { Toaster, toast } from 'react-hot-toast'
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface NetworkStats {
-  totalConnections: number
+  timestamp: string
+  bandwidth: {
+    upload: number
+    download: number
+  }
+  system: {
+    cpuUsage: number
+    memoryUsage: number
+    uptime: number
+  }
   activeConnections: number
-  blockedConnections: number
-  bandwidth: number
-  packetsPerSecond: number
-  alertsGenerated: number
 }
 
-const NetworkMonitoringDashboard: React.FC = () => {
-  const [connections, setConnections] = useState<NetworkConnection[]>([])
-  const [stats, setStats] = useState<NetworkStats>({
-    totalConnections: 0,
-    activeConnections: 0,
-    blockedConnections: 0,
-    bandwidth: 0,
-    packetsPerSecond: 0,
-    alertsGenerated: 0
-  })
+interface PortScanResult {
+  port: number
+  state: string
+  service: string
+}
+
+export default function NetworkMonitoringDashboard() {
+  const [metrics, setMetrics] = useState<NetworkStats | null>(null)
+  const [metricHistory, setMetricHistory] = useState<any[]>([])
   const [isMonitoring, setIsMonitoring] = useState(true)
 
+  // Port Scanner State
+  const [targetIP, setTargetIP] = useState('127.0.0.1')
+  const [scanPorts, setScanPorts] = useState('21,22,80,443,3306,5432,8080')
+  const [isScanning, setIsScanning] = useState(false)
+  const [scanResults, setScanResults] = useState<PortScanResult[]>([])
+
   useEffect(() => {
-    const generateConnection = (): NetworkConnection => {
-      const protocols = ['TCP', 'UDP', 'ICMP', 'HTTP', 'HTTPS', 'SSH', 'FTP', 'DNS']
-      const ports = [80, 443, 22, 21, 53, 3389, 8080, 8443, 445, 135, 139]
-      const risks: Array<'low' | 'medium' | 'high' | 'critical'> = ['low', 'medium', 'high', 'critical']
-      const statuses: Array<'active' | 'blocked' | 'monitoring'> = ['active', 'blocked', 'monitoring']
-      const countries = ['US', 'CN', 'RU', 'DE', 'GB', 'FR', 'KR', 'JP', 'CA', 'AU']
-      
-      const generateIP = () => {
-        // Generate realistic internal/external IP addresses
-        const isInternal = Math.random() > 0.7
-        if (isInternal) {
-          return `192.168.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`
-        } else {
-          return `${Math.floor(Math.random() * 223) + 1}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`
-        }
-      }
+    if (!isMonitoring) return
 
-      const risk = risks[Math.floor(Math.random() * risks.length)]
-      const status = risk === 'critical' ? 'blocked' : statuses[Math.floor(Math.random() * statuses.length)]
+    const fetchMetrics = async () => {
+      try {
+        const res = await fetch('/api/network/metrics')
+        const data = await res.json()
+        setMetrics(data)
 
-      return {
-        id: `conn-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        sourceIP: generateIP(),
-        destIP: generateIP(),
-        port: ports[Math.floor(Math.random() * ports.length)],
-        protocol: protocols[Math.floor(Math.random() * protocols.length)],
-        status,
-        bytes: Math.floor(Math.random() * 1000000) + 1024,
-        packets: Math.floor(Math.random() * 10000) + 100,
-        risk,
-        timestamp: new Date(),
-        country: countries[Math.floor(Math.random() * countries.length)],
-        asn: `AS${Math.floor(Math.random() * 70000) + 1000}`
+        setMetricHistory(prev => {
+          const newItem = {
+            time: new Date().toLocaleTimeString(),
+            upload: data.bandwidth.upload,
+            download: data.bandwidth.download,
+            cpu: data.system.cpuUsage
+          }
+          const newHistory = [...prev, newItem]
+          return newHistory.slice(-20) // Keep last 20 data points
+        })
+      } catch (err) {
+        console.error('Failed to fetch metrics', err)
       }
     }
 
-    const updateStats = (newConnection: NetworkConnection) => {
-      setStats(prevStats => ({
-        totalConnections: prevStats.totalConnections + 1,
-        activeConnections: Math.floor(Math.random() * 50) + 20,
-        blockedConnections: newConnection.status === 'blocked' 
-          ? prevStats.blockedConnections + 1 
-          : prevStats.blockedConnections,
-        bandwidth: Math.floor(Math.random() * 1000) + 100, // Mbps
-        packetsPerSecond: Math.floor(Math.random() * 50000) + 10000,
-        alertsGenerated: newConnection.risk === 'critical' || newConnection.risk === 'high'
-          ? prevStats.alertsGenerated + 1
-          : prevStats.alertsGenerated
-      }))
-    }
-
-    const addConnection = () => {
-      if (isMonitoring) {
-        const newConnection = generateConnection()
-        setConnections(prevConnections => [newConnection, ...prevConnections.slice(0, 49)]) // Keep latest 50
-        updateStats(newConnection)
-      }
-    }
-
-    // Initialize with some connections
-    const initialConnections = Array.from({ length: 20 }, generateConnection)
-    setConnections(initialConnections)
-    
-    // Set up real-time updates
-    const interval = setInterval(addConnection, 1000 + Math.random() * 2000) // 1-3 seconds
-
+    fetchMetrics()
+    const interval = setInterval(fetchMetrics, 2000)
     return () => clearInterval(interval)
   }, [isMonitoring])
 
-  const getRiskColor = (risk: string) => {
-    switch (risk) {
-      case 'critical': return 'text-red-400 bg-red-500/20'
-      case 'high': return 'text-orange-400 bg-orange-500/20'
-      case 'medium': return 'text-yellow-400 bg-yellow-500/20'
-      case 'low': return 'text-green-400 bg-green-500/20'
-      default: return 'text-gray-400 bg-gray-500/20'
-    }
-  }
+  const handleScan = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsScanning(true)
+    setScanResults([])
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'text-green-400 bg-green-500/20'
-      case 'blocked': return 'text-red-400 bg-red-500/20'
-      case 'monitoring': return 'text-blue-400 bg-blue-500/20'
-      default: return 'text-gray-400 bg-gray-500/20'
-    }
-  }
+    try {
+      const res = await fetch('/api/network/port-scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target: targetIP, ports: scanPorts })
+      })
+      const data = await res.json()
 
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 B'
-    const k = 1024
-    const sizes = ['B', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+      if (data.openPorts) {
+        setScanResults(data.openPorts)
+        toast.success(`Scan complete. Found ${data.openPorts.length} open ports.`)
+      } else {
+        toast.error('Scan failed or no ports found.')
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to initiate scan')
+    } finally {
+      setIsScanning(false)
+    }
   }
 
   return (
     <div className="min-h-screen bg-slate-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
+        <Toaster position="top-right" />
+
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-primary-400 mb-2">
-              🌐 Real-Time Network Monitoring
+            <h1 className="text-3xl font-bold text-cyan-400 mb-2 flex items-center gap-3">
+              <Network className="w-8 h-8" />
+              Network Operations Center
             </h1>
-            <p className="text-gray-400">Live network traffic analysis and threat detection</p>
+            <p className="text-slate-400">Real-time infrastructure monitoring and active reconnaissance</p>
           </div>
           <div className="flex items-center gap-4">
-            <motion.div
-              className={`flex items-center gap-2 px-4 py-2 rounded-full ${
-                isMonitoring ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
-              }`}
-              animate={{ scale: isMonitoring ? [1, 1.05, 1] : 1 }}
-              transition={{ duration: 2, repeat: isMonitoring ? Infinity : 0 }}
-            >
-              <Activity className="w-4 h-4" />
-              {isMonitoring ? 'Live Monitoring' : 'Paused'}
-            </motion.div>
+            <div className="flex items-center gap-2 text-sm text-slate-400">
+              <span className={`w-3 h-3 rounded-full ${isMonitoring ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
+              {isMonitoring ? 'Live Feed Active' : 'Feed Paused'}
+            </div>
             <button
               onClick={() => setIsMonitoring(!isMonitoring)}
-              className="px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
+              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors text-sm border border-slate-700"
             >
-              {isMonitoring ? 'Pause' : 'Resume'}
+              {isMonitoring ? 'Pause Monitor' : 'Resume Monitor'}
             </button>
           </div>
         </div>
 
-        {/* Network Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass-card p-4"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Total</p>
-                <p className="text-xl font-bold text-white">{stats.totalConnections.toLocaleString()}</p>
-              </div>
-              <Network className="w-6 h-6 text-primary-400" />
+        {/* Real-Time Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-slate-900/50 border border-cyan-500/20 rounded-lg p-6 backdrop-blur">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-slate-400 text-sm">CPU Usage</span>
+              <Activity className="w-5 h-5 text-cyan-400" />
             </div>
-          </motion.div>
+            <div className="text-3xl font-bold text-white">{metrics?.system.cpuUsage}%</div>
+            <div className="w-full bg-slate-800 h-1.5 mt-3 rounded-full overflow-hidden">
+              <div
+                className="bg-cyan-400 h-full transition-all duration-500"
+                style={{ width: `${metrics?.system.cpuUsage}%` }}
+              />
+            </div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="glass-card p-4"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Active</p>
-                <p className="text-xl font-bold text-green-400">{stats.activeConnections}</p>
-              </div>
-              <Wifi className="w-6 h-6 text-green-400" />
+          <div className="bg-slate-900/50 border border-purple-500/20 rounded-lg p-6 backdrop-blur">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-slate-400 text-sm">Memory Usage</span>
+              <Server className="w-5 h-5 text-purple-400" />
             </div>
-          </motion.div>
+            <div className="text-3xl font-bold text-white">{metrics?.system.memoryUsage}%</div>
+            <div className="w-full bg-slate-800 h-1.5 mt-3 rounded-full overflow-hidden">
+              <div
+                className="bg-purple-400 h-full transition-all duration-500"
+                style={{ width: `${metrics?.system.memoryUsage}%` }}
+              />
+            </div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="glass-card p-4"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Blocked</p>
-                <p className="text-xl font-bold text-red-400">{stats.blockedConnections}</p>
-              </div>
-              <Shield className="w-6 h-6 text-red-400" />
+          <div className="bg-slate-900/50 border border-green-500/20 rounded-lg p-6 backdrop-blur">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-slate-400 text-sm">Network I/O</span>
+              <Wifi className="w-5 h-5 text-green-400" />
             </div>
-          </motion.div>
+            <div className="flex justify-between items-end">
+              <div>
+                <div className="text-xs text-slate-500">UL</div>
+                <div className="text-xl font-bold text-white">{metrics?.bandwidth.upload.toFixed(1)} <span className="text-xs font-normal text-slate-400">Mbps</span></div>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-slate-500">DL</div>
+                <div className="text-xl font-bold text-white">{metrics?.bandwidth.download.toFixed(1)} <span className="text-xs font-normal text-slate-400">Mbps</span></div>
+              </div>
+            </div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="glass-card p-4"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Bandwidth</p>
-                <p className="text-xl font-bold text-blue-400">{stats.bandwidth} Mbps</p>
-              </div>
-              <Zap className="w-6 h-6 text-blue-400" />
+          <div className="bg-slate-900/50 border border-orange-500/20 rounded-lg p-6 backdrop-blur">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-slate-400 text-sm">Active Connections</span>
+              <Globe className="w-5 h-5 text-orange-400" />
             </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="glass-card p-4"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">PPS</p>
-                <p className="text-xl font-bold text-yellow-400">{stats.packetsPerSecond.toLocaleString()}</p>
-              </div>
-              <Server className="w-6 h-6 text-yellow-400" />
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="glass-card p-4"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Alerts</p>
-                <p className="text-xl font-bold text-orange-400">{stats.alertsGenerated}</p>
-              </div>
-              <AlertCircle className="w-6 h-6 text-orange-400" />
-            </div>
-          </motion.div>
+            <div className="text-3xl font-bold text-white">{metrics?.activeConnections}</div>
+            <div className="text-xs text-slate-500 mt-2">Uptime: {Math.floor((metrics?.system.uptime || 0) / 3600)}h {Math.floor(((metrics?.system.uptime || 0) % 3600) / 60)}m</div>
+          </div>
         </div>
 
-        {/* Connection Feed */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="glass-card p-6"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">Live Network Connections</h2>
-            <Activity className="w-6 h-6 text-primary-400" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Traffic Chart */}
+          <div className="lg:col-span-2 bg-slate-900/50 border border-slate-800 rounded-lg p-6">
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <Activity className="w-5 h-5 text-cyan-400" />
+              Network Traffic History
+            </h2>
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={metricHistory}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                  <XAxis dataKey="time" stroke="#94a3b8" fontSize={12} />
+                  <YAxis stroke="#94a3b8" fontSize={12} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b' }}
+                    itemStyle={{ color: '#e2e8f0' }}
+                  />
+                  <Line type="monotone" dataKey="upload" stroke="#22d3ee" strokeWidth={2} dot={false} name="Upload (Mbps)" />
+                  <Line type="monotone" dataKey="download" stroke="#4ade80" strokeWidth={2} dot={false} name="Download (Mbps)" />
+                  <Line type="monotone" dataKey="cpu" stroke="#c084fc" strokeWidth={2} dot={false} name="CPU (%)" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-700">
-                  <th className="text-left py-3 px-2 text-gray-400 font-medium">Time</th>
-                  <th className="text-left py-3 px-2 text-gray-400 font-medium">Source</th>
-                  <th className="text-left py-3 px-2 text-gray-400 font-medium">Destination</th>
-                  <th className="text-left py-3 px-2 text-gray-400 font-medium">Port/Proto</th>
-                  <th className="text-left py-3 px-2 text-gray-400 font-medium">Data</th>
-                  <th className="text-left py-3 px-2 text-gray-400 font-medium">Risk</th>
-                  <th className="text-left py-3 px-2 text-gray-400 font-medium">Status</th>
-                  <th className="text-left py-3 px-2 text-gray-400 font-medium">Location</th>
-                </tr>
-              </thead>
-              <tbody>
-                {connections.map((conn, index) => (
-                  <motion.tr
-                    key={conn.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="border-b border-slate-800 hover:bg-slate-800/30"
-                  >
-                    <td className="py-3 px-2 text-gray-300">
-                      {conn.timestamp.toLocaleTimeString()}
-                    </td>
-                    <td className="py-3 px-2">
-                      <code className="text-primary-400 text-xs">{conn.sourceIP}</code>
-                    </td>
-                    <td className="py-3 px-2">
-                      <code className="text-primary-400 text-xs">{conn.destIP}</code>
-                    </td>
-                    <td className="py-3 px-2 text-gray-300">
-                      {conn.port}/{conn.protocol}
-                    </td>
-                    <td className="py-3 px-2 text-gray-300">
-                      <div className="text-xs">
-                        <div>{formatBytes(conn.bytes)}</div>
-                        <div className="text-gray-500">{conn.packets} pkts</div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-2">
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${getRiskColor(conn.risk)}`}>
-                        {conn.risk}
-                      </span>
-                    </td>
-                    <td className="py-3 px-2">
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(conn.status)}`}>
-                        {conn.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-2 text-gray-400 text-xs">
-                      {conn.country} / {conn.asn}
-                    </td>
-                  </motion.tr>
+          {/* Active Port Scanner */}
+          <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6">
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <Search className="w-5 h-5 text-purple-400" />
+              Active Port Scanner
+            </h2>
+
+            <form onSubmit={handleScan} className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Target IP / Hostname</label>
+                <input
+                  type="text"
+                  value={targetIP}
+                  onChange={e => setTargetIP(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-white focus:border-purple-500 focus:outline-none"
+                  placeholder="e.g. 192.168.1.1"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Ports (comma separated or range)</label>
+                <input
+                  type="text"
+                  value={scanPorts}
+                  onChange={e => setScanPorts(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-white focus:border-purple-500 focus:outline-none"
+                  placeholder="80,443,8000-8080"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={isScanning}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isScanning ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <Play className="w-4 h-4" />}
+                {isScanning ? 'Scanning...' : 'Start Scan'}
+              </button>
+            </form>
+
+            {/* Scan Results */}
+            <div className="border-t border-slate-800 pt-4">
+              <h3 className="text-sm font-semibold text-slate-300 mb-3">Recent Scan Results</h3>
+              <div className="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
+                {scanResults.length === 0 && !isScanning && (
+                  <div className="text-center text-slate-500 py-8 text-sm">
+                    No open ports found or scan not started.
+                  </div>
+                )}
+                {scanResults.map((result, i) => (
+                  <div key={i} className="flex items-center justify-between p-2 bg-slate-800/50 rounded border border-slate-700/50">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      <span className="font-mono text-cyan-400">{result.port}</span>
+                    </div>
+                    <span className="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">{result.service}</span>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   )
 }
-
-export default NetworkMonitoringDashboard
