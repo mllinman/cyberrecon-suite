@@ -26,7 +26,12 @@ if (!databaseUrl || databaseUrl.trim() === '') {
   }
 }
 
-console.log(`🔌 Connecting to database: ${databaseUrl ? databaseUrl.split('@')[1] || 'configured' : 'not configured'}`);
+// Only log in development for debugging
+if (process.env.NODE_ENV !== 'production' && databaseUrl) {
+  console.log(`🔌 Connecting to database: ${databaseUrl.split('@')[1] || 'configured'}`);
+} else if (databaseUrl) {
+  console.log('🔌 Database configured');
+}
 
 export const pool = databaseUrl ? new Pool({
   connectionString: databaseUrl,
@@ -46,7 +51,6 @@ export async function initializeDatabase() {
     console.log('Testing database connection...');
     const result = await pool.query('SELECT NOW() as current_time');
     console.log(`✓ Database connection successful at ${result.rows[0].current_time}`);
-
 
     // Create tables
     await pool.query(`
