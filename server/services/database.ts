@@ -5,45 +5,65 @@ dotenv.config();
 
 const { Pool } = pg;
 
-// Validate DATABASE_URL is properly set
+// Get DATABASE_URL but don't fail at import time
 const databaseUrl = process.env.DATABASE_URL;
 
-if (!databaseUrl || databaseUrl.trim() === '') {
-  const errorMessage = 'DATABASE_URL environment variable is not set or is empty!';
-  console.error(`❌ ${errorMessage}`);
-  console.error('   Please set DATABASE_URL to connect to your PostgreSQL database.');
-  console.error('   Example: postgresql://user:password@host:port/database');
-  
-  // In production (Railway), this is a critical error
-  if (process.env.NODE_ENV === 'production') {
-    console.error('   For Railway deployment:');
-    console.error('   1. Add PostgreSQL plugin to your Railway project');
-    console.error('   2. Link DATABASE_URL variable to your service');
-    console.error('   3. Redeploy the application');
-    throw new Error('DATABASE_URL is required in production');
-  } else {
-    console.warn('⚠️  Running without DATABASE_URL - database features will be unavailable');
+// Create pool only if DATABASE_URL is available
+export let pool: pg.Pool | null = null;
+
+function createPool() {
+  if (!databaseUrl || databaseUrl.trim() === '') {
+    return null;
   }
+
+  // Only log in development for debugging
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`🔌 Connecting to database: ${databaseUrl.split('@')[1] || 'configured'}`);
+  } else {
+    console.log('🔌 Database configured');
+  }
+
+  return new Pool({
+    connectionString: databaseUrl,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000, // Increased timeout for Railway
+  });
 }
 
-// Only log in development for debugging
-if (process.env.NODE_ENV !== 'production' && databaseUrl) {
-  console.log(`🔌 Connecting to database: ${databaseUrl.split('@')[1] || 'configured'}`);
-} else if (databaseUrl) {
-  console.log('🔌 Database configured');
-}
-
-export const pool = databaseUrl ? new Pool({
-  connectionString: databaseUrl,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000, // Increased timeout for Railway
-}) : null;
+// Initialize pool
+pool = createPool();
 
 export async function initializeDatabase() {
+  // Validate DATABASE_URL when database initialization is attempted
+  const databaseUrl = process.env.DATABASE_URL;
+  
+  if (!databaseUrl || databaseUrl.trim() === '') {
+    const errorMessage = 'DATABASE_URL environment variable is not set or is empty!';
+    console.error(`❌ ${errorMessage}`);
+    console.error('   Please set DATABASE_URL to connect to your PostgreSQL database.');
+    console.error('   Example: postgresql://user:password@host:port/database');
+    
+    // In production (Railway), this is a critical error
+    if (process.env.NODE_ENV === 'production') {
+      console.error('   For Railway deployment:');
+      console.error('   1. Add PostgreSQL plugin to your Railway project');
+      console.error('   2. Link DATABASE_URL variable to your service');
+      console.error('   3. Redeploy the application');
+      throw new Error('DATABASE_URL is required in production');
+    } else {
+      console.warn('⚠️  Running without DATABASE_URL - database features will be unavailable');
+      throw new Error('Database pool is not initialized. DATABASE_URL is required.');
+    }
+  }
+
   if (!pool) {
-    throw new Error('Database pool is not initialized. DATABASE_URL is required.');
+    // Recreate pool if it wasn't created during module load
+    pool = createPool();
+    if (!pool) {
+      throw new Error('Failed to create database pool. DATABASE_URL may be invalid.');
+    }
   }
 
   try {
