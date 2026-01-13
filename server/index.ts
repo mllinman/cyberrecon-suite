@@ -16,6 +16,8 @@ import siemRoutes from './routes/siem.js';
 import edrRoutes from './routes/edr.js';
 import complianceRoutes from './routes/compliance.js';
 import scanRoutes from './routes/scan.js';
+import analyticsRoutes from './routes/analytics.js';
+import settingsRoutes from './routes/settings.js';
 
 // Import services
 import { initializeDatabase } from './services/database.js';
@@ -91,6 +93,8 @@ app.use('/api/siem', siemRoutes);
 app.use('/api/edr', edrRoutes);
 app.use('/api/compliance', complianceRoutes);
 app.use('/api/scan', scanRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
