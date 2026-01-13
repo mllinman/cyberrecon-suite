@@ -57,6 +57,9 @@ app.use(cors({
   credentials: true,
 }));
 
+// Enable trust proxy for Railway deployment (Load Balancers)
+app.set('trust proxy', 1);
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -72,8 +75,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'healthy', 
+  res.status(200).json({
+    status: 'healthy',
     timestamp: new Date().toISOString(),
     service: 'CyberRecon Suite API',
     version: '2.0.0'
@@ -93,7 +96,7 @@ app.use('/api/scan', scanRoutes);
 if (process.env.NODE_ENV === 'production') {
   const clientBuildPath = path.join(__dirname, '../../dist/client');
   app.use(express.static(clientBuildPath));
-  
+
   app.get('*', (req, res) => {
     res.sendFile(path.join(clientBuildPath, 'index.html'));
   });
