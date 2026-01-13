@@ -249,6 +249,88 @@ export async function query(text: string, params?: any[]) {
       return { rows: [], rowCount: 1 };
     }
 
+    // SIEM: Get Events
+    if (lowerText.includes('select * from security_events')) {
+      const events = mockStore.securityEvents.length > 0 ? mockStore.securityEvents : [
+        {
+          id: 1,
+          event_type: 'Brute Force Attempt',
+          severity: 'high',
+          source: '192.168.1.50',
+          destination: '10.0.0.5',
+          description: 'Multiple failed login attempts detected',
+          timestamp: new Date().toISOString(),
+          resolved: false
+        },
+        {
+          id: 2,
+          event_type: 'Malware Detected',
+          severity: 'critical',
+          source: 'User-Workstation-01',
+          destination: 'Internal Network',
+          description: 'Trojan.Win32.Generic detected in download',
+          timestamp: new Date(Date.now() - 3600000).toISOString(),
+          resolved: true
+        }
+      ];
+      // Basic paging simulation could be added here, but returning all is fine for mock
+      return { rows: events, rowCount: events.length };
+    }
+
+    // SIEM: Get Total Count
+    if (lowerText.includes('select count(*) from security_events')) {
+      // Check if looking for specific resolved status
+      if (lowerText.includes('resolved = $1')) {
+        const isResolved = params ? params[0] : false;
+        // If we have events in mockStore, filter them. Else return demo count.
+        const count = mockStore.securityEvents.length > 0
+          ? mockStore.securityEvents.filter(e => e.resolved === isResolved).length
+          : (isResolved ? 1 : 1);
+        return { rows: [{ count }], rowCount: 1 };
+      }
+      return { rows: [{ count: mockStore.securityEvents.length || 2 }], rowCount: 1 };
+    }
+
+    // SIEM: Dashboard Stats
+    if (lowerText.includes('count(case when severity')) {
+      return {
+        rows: [{
+          total_events: 154,
+          critical_events: 12,
+          high_events: 34,
+          medium_events: 45,
+          low_events: 63,
+          unresolved_events: 89,
+          events_last_hour: 23,
+          events_last_24h: 154
+        }],
+        rowCount: 1
+      };
+    }
+
+    // SIEM: Event Types Stats
+    if (lowerText.includes('select event_type, count(*)')) {
+      return {
+        rows: [
+          { event_type: 'Login Failure', count: 45 },
+          { event_type: 'Port Scan', count: 32 },
+          { event_type: 'Malware Blocked', count: 18 }
+        ],
+        rowCount: 3
+      };
+    }
+
+    // SIEM: Trend Stats
+    if (lowerText.includes("date_trunc('hour', timestamp)")) {
+      return {
+        rows: Array.from({ length: 24 }, (_, i) => ({
+          hour: new Date(Date.now() - i * 3600000).toISOString(),
+          event_count: Math.floor(Math.random() * 50)
+        })),
+        rowCount: 24
+      };
+    }
+
     // Health Check / Basic Connection
     if (lowerText.includes('select now()')) {
       return { rows: [{ current_time: new Date() }], rowCount: 1 };
