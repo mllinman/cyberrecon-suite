@@ -160,16 +160,21 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
         body: JSON.stringify(body),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        const data = await res.json();
         localStorage.setItem('token', data.token);
         onLogin();
       } else {
-        alert('Authentication failed');
+        // Display user-friendly error messages
+        const errorMessage = data.error || 'Authentication failed';
+        console.error('Authentication error:', errorMessage);
+        // TODO: Replace with toast notification for better UX
+        alert(errorMessage);
       }
     } catch (error) {
       console.error('Auth error:', error);
-      alert('Authentication error');
+      alert('Network error: Unable to connect to server. Please try again.');
     } finally {
       setLoading(false);
     }

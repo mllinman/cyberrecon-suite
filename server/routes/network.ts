@@ -184,9 +184,14 @@ function generateMockScanResults(scanType: string, target: string) {
   }
 }
 
+// Helper function for deterministic port scan simulation
 function generateMockPortScan(target: string, ports: string) {
+  // Use target string to seed deterministic results
+  const seed = target.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const commonPorts = [21, 22, 23, 25, 80, 110, 143, 443, 3306, 5432, 8080];
-  const openPorts = commonPorts.filter(() => Math.random() > 0.7).map(port => ({
+  
+  // Deterministically select ports based on target
+  const openPorts = commonPorts.filter((port, index) => (seed + index) % 3 === 0).map(port => ({
     port,
     state: 'open',
     service: getServiceName(port),

@@ -62,12 +62,24 @@ function generateMockSecurityEvent() {
 function generateMockThreatUpdate() {
   const threatTypes = ['malware', 'phishing', 'exploit', 'c2', 'botnet'];
   const levels = ['critical', 'high', 'medium', 'low'];
+  
+  // Use predefined test IP addresses for more realistic simulation
+  const testIPs = [
+    '203.0.113.45',  // TEST-NET-3 (RFC 5737)
+    '198.51.100.23', // TEST-NET-2 (RFC 5737)
+    '192.0.2.100',   // TEST-NET-1 (RFC 5737)
+    '10.0.0.50',     // Private network
+    '172.16.0.25',   // Private network
+  ];
+  
+  const now = Date.now();
+  const randomIndex = Math.floor((now / 1000) % testIPs.length);
 
   return {
     id: Math.floor(Math.random() * 100000),
-    type: threatTypes[Math.floor(Math.random() * threatTypes.length)],
-    indicator: `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
-    level: levels[Math.floor(Math.random() * levels.length)],
+    type: threatTypes[Math.floor((now / 2000) % threatTypes.length)],
+    indicator: testIPs[randomIndex],
+    level: levels[Math.floor((now / 3000) % levels.length)],
     source: 'Threat Intelligence Feed',
     description: 'New threat indicator detected',
     timestamp: new Date().toISOString(),

@@ -101,14 +101,20 @@ router.get('/stats', async (req: Request, res: Response) => {
 router.get('/recent', async (req: Request, res: Response) => {
   try {
     const { hours = 24, limit = 50 } = req.query;
+    
+    // Validate hours parameter
+    const hoursNum = Number(hours);
+    if (isNaN(hoursNum) || hoursNum < 1 || hoursNum > 720) {
+      return res.status(400).json({ error: 'Invalid hours parameter' });
+    }
 
     const result = await query(
       `SELECT * FROM threat_indicators 
-       WHERE last_seen >= NOW() - INTERVAL '${hours} hours'
+       WHERE last_seen >= NOW() - INTERVAL '1 hour' * $1
        AND active = true
        ORDER BY last_seen DESC
-       LIMIT $1`,
-      [Number(limit)]
+       LIMIT $2`,
+      [hoursNum, Number(limit)]
     );
 
     res.json({
