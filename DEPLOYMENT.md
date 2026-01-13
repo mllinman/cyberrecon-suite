@@ -241,16 +241,36 @@ npm run type-check
 
 ### Database Connection Issues
 
+**Symptoms:**
+- Error: `connect ECONNREFUSED ::1:5432`
+- Error: `DATABASE_URL is required in production`
+- Error: `Database pool is not initialized`
+
 **Check:**
 1. DATABASE_URL is set correctly
 2. PostgreSQL service is running
 3. Database exists
+4. DATABASE_URL is properly linked to your service
 
 **Fix:**
 ```bash
 # In Railway, check the PostgreSQL service variables
 # Ensure DATABASE_URL is linked to your main service
+
+# Steps to link DATABASE_URL:
+# 1. Go to your Railway project
+# 2. Click on your main service (not the database)
+# 3. Go to "Variables" tab
+# 4. Click "Add variable reference"
+# 5. Select DATABASE_URL from your PostgreSQL service
+# 6. Save and redeploy
 ```
+
+**Common Causes:**
+- PostgreSQL plugin not added to project
+- DATABASE_URL not linked from PostgreSQL service to main service
+- DATABASE_URL variable is empty or misconfigured
+- Network issues between services (usually auto-resolved by Railway)
 
 ### Application Won't Start
 
